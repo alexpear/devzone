@@ -3,11 +3,22 @@ import type { HistoricalEvent } from './csv.js';
 
 const MAX_GRAPHEMES = 300;
 const HASHTAG = ' #OnThisDay';
+const MONTHS = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+/** Convert "MM-DD" to "Jan 1" style. */
+export function formatDate(mmdd: string): string {
+  const [mm, dd] = mmdd.split('-');
+  return `${MONTHS[parseInt(mm, 10) - 1]} ${parseInt(dd, 10)}`;
+}
 
 export function formatPost(event: HistoricalEvent): string {
+  const date = formatDate(event.date);
   const prefix = event.year
-    ? `On this day in ${event.year}: `
-    : 'On this day: ';
+    ? `${date}, ${event.year}: `
+    : `${date}: `;
 
   let text = `${prefix}${event.event}${HASHTAG}`;
 
