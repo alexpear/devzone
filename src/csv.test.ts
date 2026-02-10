@@ -148,25 +148,37 @@ describe('loadEvents', () => {
 
   it('parses a row with a year correctly', () => {
     const events = loadEvents(new URL('../data/events.csv', import.meta.url).pathname);
-    const jan1 = events.find(e => e.date === '01-01');
-    assert.ok(jan1);
-    assert.equal(jan1.year, '1863');
-    assert.ok(jan1.event.includes('Emancipation Proclamation'));
+    const jan2 = events.find(e => e.date === '01-02');
+    assert.ok(jan2);
+    assert.equal(jan2.year, '1492');
+    assert.ok(jan2.event.includes('Granada'));
   });
 
   it('parses a row without a year correctly', () => {
     const events = loadEvents(new URL('../data/events.csv', import.meta.url).pathname);
-    const mar19 = events.find(e => e.date === '03-19');
-    assert.ok(mar19);
-    assert.equal(mar19.year, undefined);
+    const jan1 = events.find(e => e.date === '01-01');
+    assert.ok(jan1);
+    assert.equal(jan1.year, undefined);
+    assert.equal(jan1.event, "New Year's Day");
   });
 
-  it('parses a row whose event text contains commas', () => {
+  it('parses a quoted row whose event text contains commas', () => {
     const events = loadEvents(new URL('../data/events.csv', import.meta.url).pathname);
-    // "03-23,Patrick Henry delivers his "Give me liberty, or give me death!" speech,1775"
-    const mar23 = events.find(e => e.date === '03-23');
-    assert.ok(mar23);
-    assert.ok(mar23.event.includes('liberty'));
-    assert.equal(mar23.year, '1775');
+    // 01-23,"Shaanxi earthquake, most lethal in history (830k dead)",1556
+    const jan23 = events.find(e => e.date === '01-23');
+    assert.ok(jan23);
+    assert.ok(jan23.event.includes('Shaanxi earthquake'));
+    assert.ok(jan23.event.includes('most lethal'));
+    assert.equal(jan23.year, '1556');
+  });
+
+  it('parses a quoted row with commas and no year', () => {
+    const events = loadEvents(new URL('../data/events.csv', import.meta.url).pathname);
+    // 04-26,"Marcus Aurelius, David Hume, Ludwig Wittgenstein",
+    const apr26 = events.find(e => e.date === '04-26');
+    assert.ok(apr26);
+    assert.ok(apr26.event.includes('Marcus Aurelius'));
+    assert.ok(apr26.event.includes('Ludwig Wittgenstein'));
+    assert.equal(apr26.year, undefined);
   });
 });
