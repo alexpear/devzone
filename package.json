@@ -1,0 +1,30 @@
+{
+  "name": "devzone",
+  "version": "0.1.0",
+  "description": "Bluesky bot that posts a daily 'On This Day in History' event",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexpear/devzone.git"
+  },
+  "author": "alexpear",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/alexpear/devzone/issues"
+  },
+  "homepage": "https://github.com/alexpear/devzone#readme",
+  "dependencies": {
+    "@atproto/api": "^0.18.20",
+    "dotenv": "^17.2.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
