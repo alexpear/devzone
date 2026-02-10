@@ -6,6 +6,8 @@
   "scripts": {
     "start": "tsx src/main.ts",
     "typecheck": "tsc --noEmit",
+    "preview": "tsx src/preview.ts",
+    "preview:random": "tsx src/preview.ts --random",
     "test": "tsc --noEmit && tsx --test src/*.test.ts"
   },
   "repository": {
