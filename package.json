@@ -6,7 +6,7 @@
   "scripts": {
     "start": "tsx src/main.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsc --noEmit"
+    "test": "tsc --noEmit && tsx --test src/*.test.ts"
   },
   "repository": {
     "type": "git",
