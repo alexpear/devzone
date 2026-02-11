@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const csvPath = resolve(__dirname, '..', 'data', 'events.csv');
 
 const events = loadEvents(csvPath);
-const todayEvents = getEventsForToday(events);
+const todayEvents = getEventsForToday(events, 'UTC');
 
 if (todayEvents.length === 0) {
   console.log('No events found for today.');

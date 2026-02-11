@@ -13,7 +13,7 @@ if (random) {
   const pick = events[Math.floor(Math.random() * events.length)];
   console.log(formatPost(pick));
 } else {
-  const today = getEventsForToday(events);
+  const today = getEventsForToday(events, undefined);
   if (today.length === 0) {
     console.log('No events found for today.');
   } else {
