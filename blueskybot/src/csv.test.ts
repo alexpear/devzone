@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import { strict as assert } from 'node:assert';
-import { parseCsvRow, fieldsToEvent, loadEvents } from './csv.js';
+import { parseCsvRow, fieldsToEvent, loadEvents, getEventsForToday } from './csv.js';
 
 // --------------- parseCsvRow ---------------
 
@@ -174,11 +174,79 @@ describe('loadEvents', () => {
 
   it('parses a quoted row with commas and no year', () => {
     const events = loadEvents(new URL('../data/events.csv', import.meta.url).pathname);
-    // 04-26,"Marcus Aurelius, David Hume, Ludwig Wittgenstein",
+    // 04-26,"Marcus Aurelius, David Hume, Ludwig Wittgenstein born",
     const apr26 = events.find(e => e.date === '04-26');
     assert.ok(apr26);
     assert.ok(apr26.event.includes('Marcus Aurelius'));
     assert.ok(apr26.event.includes('Ludwig Wittgenstein'));
     assert.equal(apr26.year, undefined);
+  });
+});
+
+// --------------- getEventsForToday (leap year & boundary) ---------------
+
+describe('getEventsForToday — leap year and date boundaries', () => {
+  const events = loadEvents(new URL('../data/events.csv', import.meta.url).pathname);
+
+  // Helper: create a UTC date for a specific month/day/year
+  function utc(year: number, month: number, day: number): Date {
+    return new Date(Date.UTC(year, month - 1, day));
+  }
+
+  it('returns Feb 28 entry on Feb 28 of a leap year', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2024, 2, 28));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '02-28');
+  });
+
+  it('returns Feb 29 entry on Feb 29 of a leap year', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2024, 2, 29));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '02-29');
+    assert.ok(result[0].event.includes('Leap Day'));
+  });
+
+  it('returns Mar 1 entry on Mar 1 of a leap year', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2024, 3, 1));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '03-01');
+  });
+
+  it('returns Feb 28 entry on Feb 28 of a non-leap year', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2023, 2, 28));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '02-28');
+  });
+
+  it('returns Mar 1 entry on Mar 1 of a non-leap year', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2023, 3, 1));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '03-01');
+  });
+
+  it('returns no Feb 29 match on any day of a non-leap year', () => {
+    // In a non-leap year, Feb 29 never occurs, so Leap Day is simply skipped
+    for (let day = 1; day <= 28; day++) {
+      const result = getEventsForToday(events, 'UTC', utc(2023, 2, day));
+      assert.ok(result.every(e => e.date !== '02-29'), `Unexpected Feb 29 match on Feb ${day}`);
+    }
+  });
+
+  it('returns Dec 31 entry on Dec 31', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2024, 12, 31));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '12-31');
+  });
+
+  it('returns Jan 1 entry on Jan 1 after a leap year', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2025, 1, 1));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '01-01');
+  });
+
+  it('returns Jan 1 entry on Jan 1 after a non-leap year', () => {
+    const result = getEventsForToday(events, 'UTC', utc(2024, 1, 1));
+    assert.equal(result.length, 1);
+    assert.equal(result[0].date, '01-01');
   });
 });

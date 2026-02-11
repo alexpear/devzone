@@ -83,13 +83,13 @@ export function loadEvents(filePath: string): HistoricalEvent[] {
   return events;
 }
 
-export function getEventsForToday(events: HistoricalEvent[], timeZone?: string): HistoricalEvent[] {
+export function getEventsForToday(events: HistoricalEvent[], timeZone?: string, now?: Date): HistoricalEvent[] {
   const formatter = new Intl.DateTimeFormat('en-US', {
     month: '2-digit',
     day: '2-digit',
     ...(timeZone ? { timeZone } : {}),
   });
-  const now = new Date();
+  now ??= new Date();
   const parts = formatter.formatToParts(now);
   const month = parts.find(p => p.type === 'month')!.value;
   const day = parts.find(p => p.type === 'day')!.value;
