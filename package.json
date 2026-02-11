@@ -4,11 +4,11 @@
   "description": "Bluesky bot that posts a daily 'On This Day in History' event",
   "type": "module",
   "scripts": {
-    "start": "tsx src/main.ts",
+    "start": "tsx blueskybot/src/main.ts",
     "typecheck": "tsc --noEmit",
-    "preview": "tsx src/preview.ts",
-    "preview:random": "tsx src/preview.ts --random",
-    "test": "tsc --noEmit && tsx --test src/*.test.ts"
+    "preview": "tsx blueskybot/src/preview.ts",
+    "preview:random": "tsx blueskybot/src/preview.ts --random",
+    "test": "tsc --noEmit && tsx --test blueskybot/src/*.test.ts"
   },
   "repository": {
     "type": "git",
