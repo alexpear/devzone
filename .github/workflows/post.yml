@@ -16,5 +16,5 @@ jobs:
       - run: npm ci
       - run: npx tsx blueskybot/src/main.ts
         env:
-          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_HANDLE: patacalendar.bsky.social
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
