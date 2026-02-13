@@ -7,6 +7,8 @@ class Face {
         this.canvas = document.getElementById('faceCanvas');
         this.canvasCtx = this.canvas.getContext('2d');
 
+        this.xmid = this.canvas.width / 2;
+
         window.face = this;
     }
 
@@ -69,34 +71,36 @@ class Face {
                 },
                 ellipse: {
                     tilt: [0, 360],
-                    ellipticity: [0, 1],
+                    wideness: [10, 100],
+                    tallness: [10, 100],
                 },
             },
             nose: {
                 inverted7: {
-                    size: [10, 200],
+                    size: [10, 50],
                 },
-                u: {
-                    size: [10, 200],
-                },
-                w: {
-                    size: [10, 200],
-                },
+                // u: {
+                //     wideness: [10, 200],
+                //     tallness: [10, 100],
+                // },
             },
             mouth: {
                 curve: {
-                    size: [10, 300],
+                    size: [10, 100],
                     curvature: [-1, 1],
                 },
                 ellipse: {
                     wideness: [10, 200],
-                    tallness: [10, 100],
+                    tallness: [10, 50],
                 },
             },
         };
     }
 
     render () {
+        this.canvasCtx.strokeStyle = 'black';
+        this.canvasCtx.lineWidth = 10; 
+
         this.renderEyes();
         this.renderNose();
         this.renderMouth();
@@ -104,17 +108,55 @@ class Face {
     }
 
     renderEyes () {
+        if (this.eyes.shape === 'u') {
+            this.renderUEyes();
+        }
+        else if (this.eyes.shape === 'v') {
+            this.renderVEyes();
+        }
+        else if (this.eyes.shape === 'lemon') {
+            this.renderLemonEyes();
+        }
+        else if (this.eyes.shape === 'ellipse') {
+            this.renderEllipseEyes();
+        }
+    }
 
+    renderVEyes () {
+        
     }
 
     renderNose () {
+        if (this.nose.shape === 'inverted7') {
+            this.renderInverted7Nose();
+        }
+        // else if (this.nose.shape === 'inverted7') {
+        //     this.renderInverted7Nose();
+        // }
+        // else if (this.nose.shape === 'inverted7') {
+        //     this.renderInverted7Nose();
+        // }
+    }
 
+    renderInverted7Nose () {
+        const ydefault = this.canvas.height * 2 / 3;
+        this.canvasCtx.beginPath();
+        this.canvasCtx.moveTo(
+            this.xmid,
+            ydefault - this.nose.size,
+        );
+        this.canvasCtx.lineTo(
+            this.xmid + this.nose.size,
+            ydefault + this.nose.size,
+        );
+        this.canvasCtx.lineTo(
+            this.xmid,
+            ydefault + this.nose.size,
+        );
+        this.canvasCtx.stroke();
     }
 
     renderMouth () {
-        this.canvasCtx.strokeStyle = 'black';
-        this.canvasCtx.lineWidth = 10;
-
         if (this.mouth.shape === 'curve') {
             this.renderCurveMouth();
         }
@@ -124,34 +166,32 @@ class Face {
     }
 
     renderCurveMouth () {
-        const xmid = this.canvas.width / 2;
-        const ythird = this.canvas.height * 2 / 3;
+        const ydefault = this.canvas.height * 5 / 6;
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(
-            xmid - this.mouth.size / 2,
-            ythird,
+            this.xmid - this.mouth.size / 2,
+            ydefault,
         );
         this.canvasCtx.quadraticCurveTo(
-            xmid, 
-            ythird - this.mouth.curvature * this.mouth.size,
-            xmid + this.mouth.size / 2, 
-            ythird,
+            this.xmid, 
+            ydefault - this.mouth.curvature * this.mouth.size,
+            this.xmid + this.mouth.size / 2, 
+            ydefault,
         );
         this.canvasCtx.stroke();
 
         // Util.log({
-        //     xmid,
+        //     this.xmid,
         //     ythird,
         // });
     }
 
     renderEllipseMouth () {
-        const xmid = this.canvas.width / 2;
-        const ythird = this.canvas.height * 2 / 3;
+        const ydefault = this.canvas.height * 5 / 6;
         this.canvasCtx.beginPath();
         this.canvasCtx.ellipse(
-            xmid,
-            ythird,
+            this.xmid,
+            ydefault,
             this.mouth.wideness,
             this.mouth.tallness,
             0,
