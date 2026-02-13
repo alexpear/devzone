@@ -57,23 +57,25 @@ class Face {
                 // LATER more
             },
             eyes: {
-                u: {
-                    curvature: [0.1, 1],
-                    tilt: [0, 360], // LATER allow pointing upish or downish, but not sideways
-                    // LATER size
-                },
+                // u: {
+                //     curvature: [0.1, 1],
+                //     tilt: [0, 360], // LATER allow pointing upish or downish, but not sideways
+                //     // LATER size
+                // },
                 v: {
-                    angle: [1, 180],
-                    tilt: [0, 360], // LATER allow pointing upish or downish, but not sideways
+                    wideness: [1, 100],
+                    tallness: [-100, 100],
+                    apartness: [10, 150],
+                    // tilt: [0, 360], // LATER allow pointing upish or downish, but not sideways
                 },
-                lemon: {
-                    tilt: [0, 60],
-                },
-                ellipse: {
-                    tilt: [0, 360],
-                    wideness: [10, 100],
-                    tallness: [10, 100],
-                },
+                // lemon: {
+                //     tilt: [0, 60],
+                // },
+                // ellipse: {
+                //     tilt: [0, 360],
+                //     wideness: [10, 100],
+                //     tallness: [10, 100],
+                // },
             },
             nose: {
                 inverted7: {
@@ -91,7 +93,7 @@ class Face {
                 },
                 ellipse: {
                     wideness: [10, 200],
-                    tallness: [10, 50],
+                    tallness: [10, 40],
                 },
             },
         };
@@ -123,7 +125,27 @@ class Face {
     }
 
     renderVEyes () {
-        
+        this.drawVEye(this.xmid - this.eyes.apartness - this.eyes.wideness * 2);
+        this.drawVEye(this.xmid + this.eyes.apartness);
+    }
+
+    drawVEye (xstart) {
+        const ydefault = this.canvas.height / 2;
+
+        this.canvasCtx.beginPath();
+        this.canvasCtx.moveTo(
+            xstart,
+            ydefault - this.eyes.tallness,
+        );
+        this.canvasCtx.lineTo(
+            xstart + this.eyes.wideness,
+            ydefault + this.eyes.tallness,
+        );
+        this.canvasCtx.lineTo(
+            xstart + this.eyes.wideness * 2,
+            ydefault - this.eyes.tallness,
+        );
+        this.canvasCtx.stroke();
     }
 
     renderNose () {
