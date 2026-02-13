@@ -1,32 +1,59 @@
 // Renders simple procgen faces.
 
+class Hair {
+    shape: 'bald';
+}
+
+class Eyes {
+    shape: 'v'|'u'|'ellipse'|'lemon';
+    wideness: number;
+    tallness: number;
+    apartness: number;
+    tilt?: number;
+}
+
+class Nose {
+    shape: 'inverted7';
+    size: number;
+}
+
+class Mouth {
+    shape: 'curve'|'ellipse';
+    curvature?: number;
+    wideness: number;
+    tallness?: number;
+}
+
 class Face {
+    canvas: HTMLCanvasElement = document.getElementById('faceCanvas') as HTMLCanvasElement;
+    canvasCtx: CanvasRenderingContext2D = this.canvas.getContext('2d');
+    xmid: number = this.canvas.width / 2;;
+    hair: Hair;
+    eyes: Eyes;
+    nose: Nose;
+    mouth: Mouth;
+
     constructor () {
         this.randomize();
 
-        this.canvas = document.getElementById('faceCanvas');
-        this.canvasCtx = this.canvas.getContext('2d');
-
-        this.xmid = this.canvas.width / 2;
-
-        window.face = this;
+        (window as any).face = this;
     }
 
-    randomize () {
+    randomize (): void {
         const PARAM_RANGES = this.paramRanges();
 
         for (let shapeType in PARAM_RANGES) {
-            const shapeList = Object.keys(PARAM_RANGES[shapeType]);
+            const shapeList: string[] = Object.keys(PARAM_RANGES[shapeType]);
 
-            const shape = Util.randomOf(shapeList);
+            const shape: string = Util.randomOf(shapeList);
             this[shapeType] = {
                 shape,
             };
 
-            const paramsObj = PARAM_RANGES[shapeType][shape];
+            const paramsObj: object = PARAM_RANGES[shapeType][shape];
 
             for (let param in paramsObj) {
-                const range = [
+                const range: number[] = [
                     paramsObj[param][0],
                     paramsObj[param][1],
                 ];
@@ -38,19 +65,9 @@ class Face {
                 );
             }
         }
-        
-        // {
-        //     eyes: {
-        //         shape: 'lemon',
-        //         tilt: 33,
-        //     },
-        //     nose: {
-        //         ...
-        //     },
-        // }
     }
 
-    paramRanges () {
+    paramRanges (): Record<string, object> {
         return {
             hair: {
                 bald: {},
@@ -88,7 +105,7 @@ class Face {
             },
             mouth: {
                 curve: {
-                    size: [10, 100],
+                    wideness: [10, 100],
                     curvature: [-1, 1],
                 },
                 ellipse: {
@@ -99,7 +116,7 @@ class Face {
         };
     }
 
-    render () {
+    render (): void {
         this.canvasCtx.strokeStyle = 'black';
         this.canvasCtx.lineWidth = 10; 
 
@@ -109,7 +126,7 @@ class Face {
         this.renderHair();
     }
 
-    renderEyes () {
+    renderEyes (): void {
         if (this.eyes.shape === 'u') {
             this.renderUEyes();
         }
@@ -123,13 +140,22 @@ class Face {
             this.renderEllipseEyes();
         }
     }
+    renderUEyes(): void {
+        throw new Error("Method not implemented.");
+    }
+    renderLemonEyes(): void {
+        throw new Error("Method not implemented.");
+    }
+    renderEllipseEyes(): void {
+        throw new Error("Method not implemented.");
+    }
 
-    renderVEyes () {
+    renderVEyes (): void {
         this.drawVEye(this.xmid - this.eyes.apartness - this.eyes.wideness * 2);
         this.drawVEye(this.xmid + this.eyes.apartness);
     }
 
-    drawVEye (xstart) {
+    drawVEye (xstart): void {
         const ydefault = this.canvas.height / 2;
 
         this.canvasCtx.beginPath();
@@ -148,7 +174,7 @@ class Face {
         this.canvasCtx.stroke();
     }
 
-    renderNose () {
+    renderNose (): void {
         if (this.nose.shape === 'inverted7') {
             this.renderInverted7Nose();
         }
@@ -160,7 +186,7 @@ class Face {
         // }
     }
 
-    renderInverted7Nose () {
+    renderInverted7Nose (): void {
         const ydefault = this.canvas.height * 2 / 3;
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(
@@ -178,7 +204,7 @@ class Face {
         this.canvasCtx.stroke();
     }
 
-    renderMouth () {
+    renderMouth (): void {
         if (this.mouth.shape === 'curve') {
             this.renderCurveMouth();
         }
@@ -187,17 +213,17 @@ class Face {
         }
     }
 
-    renderCurveMouth () {
+    renderCurveMouth (): void {
         const ydefault = this.canvas.height * 5 / 6;
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(
-            this.xmid - this.mouth.size / 2,
+            this.xmid - this.mouth.wideness,
             ydefault,
         );
         this.canvasCtx.quadraticCurveTo(
             this.xmid, 
-            ydefault - this.mouth.curvature * this.mouth.size,
-            this.xmid + this.mouth.size / 2, 
+            ydefault - this.mouth.curvature * this.mouth.wideness * 2,
+            this.xmid + this.mouth.wideness, 
             ydefault,
         );
         this.canvasCtx.stroke();
@@ -208,7 +234,7 @@ class Face {
         // });
     }
 
-    renderEllipseMouth () {
+    renderEllipseMouth (): void {
         const ydefault = this.canvas.height * 5 / 6;
         this.canvasCtx.beginPath();
         this.canvasCtx.ellipse(
@@ -223,11 +249,11 @@ class Face {
         this.canvasCtx.stroke();
     }
 
-    renderHair () {
+    renderHair (): void {
 
     }
 
-    json () {
+    json (): Record<string, object> {
         return {
             hair: this.hair,
             eyes: this.eyes,
@@ -236,7 +262,7 @@ class Face {
         };
     }
 
-    toString () {
+    toString (): string {
         return JSON.stringify(
             this.json(),
             undefined,
@@ -244,7 +270,7 @@ class Face {
         );
     }
 
-    static run () {
+    static run (): void {
         window.addEventListener('load', () => {
             const face = new Face();
 
@@ -256,3 +282,5 @@ class Face {
 }
 
 Face.run();
+
+// TODO tslint should ask for type tags

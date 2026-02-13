@@ -1,14 +1,14 @@
 // Browser-compatible subset of devzone/util.js
 
 class Util {
-    static exists (x) {
+    static exists (x: unknown): boolean {
         return x !== undefined &&
             x !== null &&
             x !== '' &&
             ! Number.isNaN(x);
     }
 
-    static randomIntBetween (minInclusive, maxExclusive) {
+    static randomIntBetween (minInclusive: number, maxExclusive: number): number {
         if (! Util.exists(minInclusive) || ! Util.exists(maxExclusive)) {
             throw new Error(`Util.randomIntBetween() called with missing parameters: max ${maxExclusive}, min ${minInclusive}`);
         }
@@ -19,16 +19,16 @@ class Util {
         return Math.floor(Math.random() * (maxExclusive - minInclusive) + minInclusive);
     }
 
-    static randomBelow (maxExclusive) {
+    static randomBelow (maxExclusive: number): number {
         return Math.floor(Math.random() * maxExclusive);
     }
 
-    static randomOf (array) {
-        return array[Util.randomBelow(array.length)];
+    static randomOf<T> (array: T[]): T {
+        return array[ Util.randomBelow(array.length) ];
     }
 
     // decimalPlaces is optional and defaults to 0.
-    static randomRange (minInclusive, maxExclusive, decimalPlaces) {
+    static randomRange (minInclusive: number, maxExclusive: number, decimalPlaces?: number): number {
         if (maxExclusive < minInclusive) {
             const temp = minInclusive;
             minInclusive = maxExclusive;
@@ -41,7 +41,7 @@ class Util {
         return Math.round(unrounded * factor) / factor;
     }
 
-    static log (input) {
+    static log (input: unknown): void {
         const info = typeof input === 'string'
             ? input
             : JSON.stringify(input, undefined, '    ');
