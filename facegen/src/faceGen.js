@@ -18,48 +18,40 @@ class Face {
             const shapeList = Object.keys(PARAM_RANGES[shapeType]);
 
             const shape = Util.randomOf(shapeList);
-            this[shapeType] = shape;
+            this[shapeType] = {
+                shape,
+            };
 
             const paramsObj = PARAM_RANGES[shapeType][shape];
 
             for (let param in paramsObj) {
+                const range = [
+                    paramsObj[param][0],
+                    paramsObj[param][1],
+                ];
 
+                this[shapeType][param] = Util.randomRange(range[0], range[1]);
             }
-
         }
-
-        const fakethis = {
-            eyeShape: 'lemon',
-            eyeParams: {
-                tilt: 33,
-            },
-            //...
-        }
-
-        const fakethis2 = {
-            eyes: {
-                shape: 'lemon',
-                tilt: 33,
-            },
-            nose: {
-
-            },
-
-        }
-
-        // todo
+        
+        // {
+        //     eyes: {
+        //         shape: 'lemon',
+        //         tilt: 33,
+        //     },
+        //     nose: {
+        //         ...
+        //     },
+        // }
     }
-
-    
 
     paramRanges () {
         return {
-            // TODO hair:, not hairShape:
-            hairShape: {
+            hair: {
                 bald: {},
                 // LATER more
             },
-            eyeShape: {
+            eyes: {
                 u: {
                     curvature: [0.1, 1],
                     tilt: [0, 360], // LATER allow pointing upish or downish, but not sideways
@@ -77,7 +69,7 @@ class Face {
                     ellipticity: [0, 1],
                 },
             },
-            noseShape: {
+            nose: {
                 inverted7: {
                     size: [10, 100],
                 },
@@ -88,7 +80,7 @@ class Face {
                     size: [10, 100],
                 },
             },
-            mouthShape: {
+            mouth: {
                 curve: {
                     size: [10, 100],
                     curvature: [-1, 1],
@@ -142,11 +134,30 @@ class Face {
 
     }
 
+    json () {
+        return {
+            hair: this.hair,
+            eyes: this.eyes,
+            nose: this.nose,
+            mouth: this.mouth,
+        };
+    }
+
+    toString () {
+        return JSON.stringify(
+            this.json(),
+            undefined,
+            '    '
+        );
+    }
+
     static run () {
         window.addEventListener('load', () => {
             const face = new Face();
 
             face.render();
+
+            Util.log(face);
         });
     }
 }
