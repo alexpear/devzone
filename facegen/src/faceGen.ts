@@ -80,7 +80,7 @@ class Face {
                 //     // LATER size
                 // },
                 v: {
-                    wideness: [1, 100],
+                    wideness: [10, 100],
                     tallness: [-100, 100],
                     apartness: [10, 150],
                     // tilt: [0, 360], // LATER allow pointing upish or downish, but not sideways
@@ -284,3 +284,4 @@ class Face {
 Face.run();
 
 // TODO tslint should ask for type tags
+// todo npm script for tsc + open browser
