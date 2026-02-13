@@ -1,6 +1,5 @@
 // Renders simple procgen faces.
 
-import Util from '../../util.js';
 
 class Face {
     constructor () {
@@ -157,7 +156,7 @@ class Face {
 
             face.render();
 
-            Util.log(face);
+            Util.log(face.toString());
         });
     }
 }
