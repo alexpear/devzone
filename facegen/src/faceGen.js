@@ -88,10 +88,10 @@ class Face {
                     size: [10, 300],
                     curvature: [-1, 1],
                 },
-                // ellipse: {
-                //     size: [10, 300],
-                //     ellipticity: [0, 1],
-                // },
+                ellipse: {
+                    wideness: [10, 200],
+                    tallness: [10, 100],
+                },
             },
         };
     }
@@ -112,17 +112,18 @@ class Face {
     }
 
     renderMouth () {
+        this.canvasCtx.strokeStyle = 'black';
+        this.canvasCtx.lineWidth = 10;
+
         if (this.mouth.shape === 'curve') {
             this.renderCurveMouth();
         }
-        else {
-            // LATER
+        else if (this.mouth.shape === 'ellipse') {
+            this.renderEllipseMouth();
         }
     }
 
     renderCurveMouth () {
-        this.canvasCtx.strokeStyle = 'black';
-        this.canvasCtx.lineWidth = 10;
         const xmid = this.canvas.width / 2;
         const ythird = this.canvas.height * 2 / 3;
         this.canvasCtx.beginPath();
@@ -138,12 +139,26 @@ class Face {
         );
         this.canvasCtx.stroke();
 
-        console.log('mouth drawn');
+        // Util.log({
+        //     xmid,
+        //     ythird,
+        // });
+    }
 
-        Util.log({
+    renderEllipseMouth () {
+        const xmid = this.canvas.width / 2;
+        const ythird = this.canvas.height * 2 / 3;
+        this.canvasCtx.beginPath();
+        this.canvasCtx.ellipse(
             xmid,
             ythird,
-        });
+            this.mouth.wideness,
+            this.mouth.tallness,
+            0,
+            0,
+            2 * Math.PI,
+        );
+        this.canvasCtx.stroke();
     }
 
     renderHair () {
