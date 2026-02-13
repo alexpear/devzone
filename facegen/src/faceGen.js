@@ -1,13 +1,13 @@
 // Renders simple procgen faces.
 
-
 class Face {
     constructor () {
         this.randomize();
 
-        this.canvas = document.getElementById('faceCanvas')
-            .getContext('2d');
-        // this.ctx = this.canvas.getContext('2d');
+        this.canvas = document.getElementById('faceCanvas');
+        this.canvasCtx = this.canvas.getContext('2d');
+
+        window.face = this;
     }
 
     randomize () {
@@ -29,7 +29,11 @@ class Face {
                     paramsObj[param][1],
                 ];
 
-                this[shapeType][param] = Util.randomRange(range[0], range[1]);
+                this[shapeType][param] = Util.randomRange(
+                    range[0], 
+                    range[1],
+                    1, // decimalPlaces
+                );
             }
         }
         
@@ -70,24 +74,24 @@ class Face {
             },
             nose: {
                 inverted7: {
-                    size: [10, 100],
+                    size: [10, 200],
                 },
                 u: {
-                    size: [10, 100],
+                    size: [10, 200],
                 },
                 w: {
-                    size: [10, 100],
+                    size: [10, 200],
                 },
             },
             mouth: {
                 curve: {
-                    size: [10, 100],
+                    size: [10, 300],
                     curvature: [-1, 1],
                 },
-                ellipse: {
-                    size: [10, 100],
-                    ellipticity: [0, 1],
-                },
+                // ellipse: {
+                //     size: [10, 300],
+                //     ellipticity: [0, 1],
+                // },
             },
         };
     }
@@ -108,14 +112,38 @@ class Face {
     }
 
     renderMouth () {
-        this.canvas.strokeStyle = 'black';
-        this.canvas.lineWidth = 10;
-        this.canvas.beginPath();
-        this.canvas.moveTo(200, 500);
-        this.canvas.quadraticCurveTo(300, 400, 400, 500);
-        this.canvas.stroke();
+        if (this.mouth.shape === 'curve') {
+            this.renderCurveMouth();
+        }
+        else {
+            // LATER
+        }
+    }
 
-        console.log('mouth stroked');
+    renderCurveMouth () {
+        this.canvasCtx.strokeStyle = 'black';
+        this.canvasCtx.lineWidth = 10;
+        const xmid = this.canvas.width / 2;
+        const ythird = this.canvas.height * 2 / 3;
+        this.canvasCtx.beginPath();
+        this.canvasCtx.moveTo(
+            xmid - this.mouth.size / 2,
+            ythird,
+        );
+        this.canvasCtx.quadraticCurveTo(
+            xmid, 
+            ythird - this.mouth.curvature * this.mouth.size,
+            xmid + this.mouth.size / 2, 
+            ythird,
+        );
+        this.canvasCtx.stroke();
+
+        console.log('mouth drawn');
+
+        Util.log({
+            xmid,
+            ythird,
+        });
     }
 
     renderHair () {
