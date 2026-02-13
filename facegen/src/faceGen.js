@@ -1,5 +1,7 @@
 // Renders simple procgen faces.
 
+import Util from '../../util.js';
+
 class Face {
     constructor () {
         this.randomize();
@@ -13,14 +15,46 @@ class Face {
         const PARAM_RANGES = this.paramRanges();
 
         for (let shapeType in PARAM_RANGES) {
-            
+            const shapeList = Object.keys(PARAM_RANGES[shapeType]);
+
+            const shape = Util.randomOf(shapeList);
+            this[shapeType] = shape;
+
+            const paramsObj = PARAM_RANGES[shapeType][shape];
+
+            for (let param in paramsObj) {
+
+            }
+
+        }
+
+        const fakethis = {
+            eyeShape: 'lemon',
+            eyeParams: {
+                tilt: 33,
+            },
+            //...
+        }
+
+        const fakethis2 = {
+            eyes: {
+                shape: 'lemon',
+                tilt: 33,
+            },
+            nose: {
+
+            },
+
         }
 
         // todo
     }
 
+    
+
     paramRanges () {
         return {
+            // TODO hair:, not hairShape:
             hairShape: {
                 bald: {},
                 // LATER more
