@@ -93,21 +93,10 @@ class Face {
     }
 
     render () {
-        // LATER output a image. Currently draw to html canvas.
-
         this.renderEyes();
         this.renderNose();
         this.renderMouth();
         this.renderHair();
-
-        // DEBUG
-        this.canvas.fillStyle = 'blue';
-        this.canvas.fillRect(0, 0, this.canvas.canvas.width, this.canvas.canvas.height);
-
-        this.canvas.fillStyle = 'black';
-        
-        this.canvas.fillRect(50, 50, 50, 50);
-        // TODO this test square is vertically stretched for some reason.
     }
 
     renderEyes () {
