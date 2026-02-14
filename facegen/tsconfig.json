@@ -1,11 +1,11 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": false,
-    "lib": ["ES2020", "DOM"],
-    "types": []
-  },
-  "include": ["src"]
+    "compilerOptions": {
+        "target": "ES2020",
+        "outDir": "dist",
+        "rootDir": "src",
+        "strict": false,
+        "lib": ["ES2020", "DOM"],
+        "types": []
+    },
+    "include": ["src"]
 }

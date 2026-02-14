@@ -5,13 +5,15 @@ const commaNumber = require('comma-number');
 const moment = require('moment');
 
 class Util {
-    static colored (str, colorName) {
-        return (Util.COLORS[colorName] || Util.COLORS.purple) +
+    static colored(str, colorName) {
+        return (
+            (Util.COLORS[colorName] || Util.COLORS.purple) +
             str +
-            Util.COLORS.balance;
+            Util.COLORS.balance
+        );
     }
 
-    static customColored (str, foreground, background) {
+    static customColored(str, foreground, background) {
         const FMAP = {
             black: 30,
             red: 31,
@@ -56,7 +58,7 @@ class Util {
         return '\x1b[1;' + fcode + ';' + bcode + 'm' + str + '\x1b[0m';
     }
 
-    static randomPastel () {
+    static randomPastel() {
         const min = 0x70;
 
         let hexCode = '#';
@@ -69,7 +71,7 @@ class Util {
         return hexCode;
     }
 
-    static colorDiff (hex1, hex2) {
+    static colorDiff(hex1, hex2) {
         // later standardize inputs to strings
         let diff = 0;
 
@@ -87,29 +89,26 @@ class Util {
         return diff;
     }
 
-    static exists (x) {
-        return x !== undefined &&
-            x !== null &&
-            x !== '' &&
-            ! Util.isNaN(x);
+    static exists(x) {
+        return x !== undefined && x !== null && x !== '' && !Util.isNaN(x);
     }
 
-    static legit (x) {
-        return Util.exists(x) &&
+    static legit(x) {
+        return (
+            Util.exists(x) &&
             // it's not []
-            ! (Util.isArray(x) && x.length === 0) &&
+            !(Util.isArray(x) && x.length === 0) &&
             // it's not {}
-            ! (typeof x === 'object' && Object.keys(x).length === 0);
-    }
-
-    // Logs information about unknown values.
-    static analyze (mysterious) {
-        Util.logDebug(
-            Util.analyzeHelper(mysterious)
+            !(typeof x === 'object' && Object.keys(x).length === 0)
         );
     }
 
-    static analyzeHelper (mysterious) {
+    // Logs information about unknown values.
+    static analyze(mysterious) {
+        Util.logDebug(Util.analyzeHelper(mysterious));
+    }
+
+    static analyzeHelper(mysterious) {
         const summary = { typeof: typeof mysterious };
 
         if (Util.isPrimitive(mysterious)) {
@@ -119,7 +118,7 @@ class Util {
         }
 
         // BTW: This conditional is probably redundant after the conditional above.
-        if (! Util.exists(mysterious)) {
+        if (!Util.exists(mysterious)) {
             summary.analysis = `Stopped because this value does not exist.`;
             return summary;
         }
@@ -138,13 +137,16 @@ class Util {
 
         summary.propsArray.map(
             // prop => summary.propsOfProps[prop] = Object.getOwnPropertyNames(mysterious[prop])
-            prop => summary.propsOfProps[prop] = Util.analyzeHelper(mysterious[prop])
+            (prop) =>
+                (summary.propsOfProps[prop] = Util.analyzeHelper(
+                    mysterious[prop],
+                )),
         );
 
         return summary;
     }
 
-    static default (input, defaultValue) {
+    static default(input, defaultValue) {
         if (input === undefined) {
             return defaultValue;
         } else {
@@ -154,7 +156,7 @@ class Util {
 
     // Safely dig deep into a nested obj.
     // Example: Util.access(pageObj, 'revision.text.$text');
-    static access (obj, dotSeparatedFields) {
+    static access(obj, dotSeparatedFields) {
         if (dotSeparatedFields[0] === '.') {
             dotSeparatedFields = dotSeparatedFields.slice(1);
         }
@@ -162,7 +164,7 @@ class Util {
         const fieldNames = dotSeparatedFields.split('.');
 
         for (let name of fieldNames) {
-            if (! obj) {
+            if (!obj) {
                 return undefined;
             }
 
@@ -172,12 +174,12 @@ class Util {
         return obj;
     }
 
-    static contains (array, fugitive) {
+    static contains(array, fugitive) {
         return array.includes(fugitive);
     }
 
-    static hasOverlap (arrayA, arrayB) {
-        if (! arrayA || ! arrayB) {
+    static hasOverlap(arrayA, arrayB) {
+        if (!arrayA || !arrayB) {
             return false;
         }
 
@@ -190,7 +192,7 @@ class Util {
         return false;
     }
 
-    static flatten (arrayOfArrays) {
+    static flatten(arrayOfArrays) {
         let flat = arrayOfArrays[0];
 
         for (let i = 1; i < arrayOfArrays.length; i++) {
@@ -202,28 +204,27 @@ class Util {
 
     // Returns number
     // Default 0
-    static sum (array) {
-        return Util.array(array).reduce(
-            (sumSoFar, element) => {
-                const n = Number(element) || 0;
-                return sumSoFar + n;
-            },
-            0
-        );
+    static sum(array) {
+        return Util.array(array).reduce((sumSoFar, element) => {
+            const n = Number(element) || 0;
+            return sumSoFar + n;
+        }, 0);
     }
 
     // Average
     // LATER could support multiple param usage: Util.mean(3, 5, 7)
-    static mean (array) {
+    static mean(array) {
         array = Util.array(array);
-        if (array.length === 0) { return 0; }
+        if (array.length === 0) {
+            return 0;
+        }
 
         const sum = Util.sum(array);
         return sum / array.length;
     }
 
     // More robust variant of Math.min()
-    static min (...args) {
+    static min(...args) {
         if (args.length === 1 && Util.isArray(args[0])) {
             return Math.min(...args[0]);
         }
@@ -232,7 +233,7 @@ class Util {
     }
 
     // More robust variant of Math.max()
-    static max (...args) {
+    static max(...args) {
         if (args.length === 1 && Util.isArray(args[0])) {
             return Math.max(...args[0]);
         }
@@ -240,14 +241,13 @@ class Util {
         return Math.max(...args);
     }
 
-    static commonest (array) {
+    static commonest(array) {
         const dict = {};
 
         for (let value of array) {
             if (dict[value]) {
                 dict[value] += 1;
-            }
-            else {
+            } else {
                 dict[value] = 1;
             }
         }
@@ -265,27 +265,25 @@ class Util {
         return winner;
     }
 
-    static median (array) {
+    static median(array) {
         array = Util.array(array);
-        if (array.length === 0) { return 0; }
+        if (array.length === 0) {
+            return 0;
+        }
         array = Util.arrayCopy(array);
         array.sort();
 
         const midpoint = Math.floor(array.length / 2);
 
         if (array.length % 2 === 0) {
-            return Util.mean([
-                array[midpoint],
-                array[midpoint + 1],
-            ]);
-        }
-        else {
+            return Util.mean([array[midpoint], array[midpoint + 1]]);
+        } else {
             return array[midpoint];
         }
     }
 
     // Modifies the array.
-    static shuffle (array) {
+    static shuffle(array) {
         for (let i = 0; i <= array.length - 2; i++) {
             const untouchedCount = array.length - 1 - i;
 
@@ -299,14 +297,11 @@ class Util {
         return array;
     }
 
-    static testShuffle () {
+    static testShuffle() {
         for (let repeat = 0; repeat <= 999; repeat++) {
             const len = Math.floor(Math.random() * 100);
 
-            const array = [...Array(len)]
-                .map(
-                    x => Math.random()
-                );
+            const array = [...Array(len)].map((x) => Math.random());
 
             const backup = Array.from(array);
 
@@ -331,7 +326,7 @@ class Util {
                 good = false;
             }
 
-            if (! good) {
+            if (!good) {
                 Util.error({
                     repeat,
                     array,
@@ -347,7 +342,7 @@ class Util {
         }
     }
 
-    static constrain (n, minInclusive, maxInclusive) {
+    static constrain(n, minInclusive, maxInclusive) {
         if (n <= minInclusive) {
             return minInclusive;
         }
@@ -359,7 +354,7 @@ class Util {
     }
 
     // Less permissive than constrain()
-    static constrainOrError (n, min = 0, max = 1, leeway = 0.01) {
+    static constrainOrError(n, min = 0, max = 1, leeway = 0.01) {
         if (n >= min && n <= max) {
             return n;
         }
@@ -381,44 +376,47 @@ class Util {
         });
     }
 
-    static randomIntBetween (minInclusive, maxExclusive) {
-        if (! Util.exists(minInclusive) || ! Util.exists(maxExclusive)) {
-            console.log('error: Util.randomIntBetween() called with missing parameters.');
+    static randomIntBetween(minInclusive, maxExclusive) {
+        if (!Util.exists(minInclusive) || !Util.exists(maxExclusive)) {
+            console.log(
+                'error: Util.randomIntBetween() called with missing parameters.',
+            );
             throw new Error(`max ${maxExclusive}, min ${minInclusive}`);
-        }
-        else if (maxExclusive <= minInclusive) {
-            console.log('error: Util.randomIntBetween() called with max <= min.');
+        } else if (maxExclusive <= minInclusive) {
+            console.log(
+                'error: Util.randomIntBetween() called with max <= min.',
+            );
             throw new Error(`max ${maxExclusive}, min ${minInclusive}`);
         }
 
-        return Math.floor( Math.random() * (maxExclusive - minInclusive) + minInclusive );
+        return Math.floor(
+            Math.random() * (maxExclusive - minInclusive) + minInclusive,
+        );
     }
 
     // Returns value in range [0, input]
-    static randomUpTo (maxInclusive) {
-        return maxInclusive >= 0 ?
-            Util.randomIntBetween(0, maxInclusive + 1) :
-            maxInclusive;
+    static randomUpTo(maxInclusive) {
+        return maxInclusive >= 0
+            ? Util.randomIntBetween(0, maxInclusive + 1)
+            : maxInclusive;
     }
 
-    static randomBelow (maxExclusive) {
+    static randomBelow(maxExclusive) {
         return Math.floor(Math.random() * maxExclusive);
     }
 
-    static randomOf (array) {
-        return array[
-            Util.randomBelow(array.length)
-        ];
+    static randomOf(array) {
+        return array[Util.randomBelow(array.length)];
     }
 
-    static randomFromObj (obj) {
+    static randomFromObj(obj) {
         const key = Util.randomOf(Object.keys(obj));
         return obj[key];
     }
 
     // Param: obj, whose values are also objects.
     // Side effect: writes to .name prop of child objs.
-    static randomWithName (obj) {
+    static randomWithName(obj) {
         const name = _.sample(Object.keys(obj));
 
         const entry = obj[name];
@@ -427,15 +425,15 @@ class Util {
     }
 
     // decimalPlaces param is optional and lodash defaults it to 0.
-    static randomRange (minInclusive, maxExclusive, decimalPlaces) {
+    static randomRange(minInclusive, maxExclusive, decimalPlaces) {
         if (maxExclusive < minInclusive) {
             const temp = minInclusive;
             minInclusive = maxExclusive;
             maxExclusive = temp;
         }
 
-        const unrounded = (Math.random() * (maxExclusive - minInclusive))
-            + minInclusive;
+        const unrounded =
+            Math.random() * (maxExclusive - minInclusive) + minInclusive;
 
         // TODO Bug? If random() gives 0.99, can it round up to maxExclusive?
 
@@ -450,10 +448,8 @@ class Util {
     //     stGeorge: 7,
     //     dragon: 12
     // }
-    static randomBagDraw (bag) {
-        const total = Util.sum(
-            Object.values(bag)
-        );
+    static randomBagDraw(bag) {
+        const total = Util.sum(Object.values(bag));
 
         let drawn = Math.random() * total;
 
@@ -469,24 +465,24 @@ class Util {
         return name;
     }
 
-    static randomLetter () {
+    static randomLetter() {
         return Util.randomOf(`ABCDEFGHIJKLMNOPQRSTUVWXYZ`);
     }
 
-    static roll2d6 () {
+    static roll2d6() {
         return Util.roll1d6() + Util.roll1d6();
     }
 
-    static roll1d6 () {
+    static roll1d6() {
         return Util.rollDie(6);
     }
 
-    static rollDie (sides) {
+    static rollDie(sides) {
         return Math.ceil(Math.random() * sides);
     }
 
     // x dice with y sides each
-    static rollXdY (x, y) {
+    static rollXdY(x, y) {
         let total = 0;
 
         for (let i = 0; i < x; i++) {
@@ -496,40 +492,35 @@ class Util {
         return total;
     }
 
-    static testRoll1d6 () {
+    static testRoll1d6() {
         const results = [];
 
         for (let i = 0; i < 5000; i++) {
-            results.push(
-                Util.roll1d6()
-            );
+            results.push(Util.roll1d6());
         }
 
         console.log();
 
-        Util.logDebug(
-            Util.arraySummary(results)
-        );
+        Util.logDebug(Util.arraySummary(results));
     }
 
     // seed: nonnegative integer
-    static simpleHash (seed) {
+    static simpleHash(seed) {
         // seed + 1 because 0 => 0 would be too regular.
         const divided = (seed + 1) / Math.PI;
         return divided - Math.floor(divided);
     }
 
     // Returns string
-    static newId (idLength) {
+    static newId(idLength) {
         // Later research the most performant way to run this.
         // Later could remove similar characters like 1i0O, maybe 5S
-        const ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const ALPHABET =
+            '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
         let id = '';
         for (let i = 0; i < (idLength || 50); i++) {
-            const index = Math.floor(
-                Math.random() * ALPHABET.length
-            );
+            const index = Math.floor(Math.random() * ALPHABET.length);
             id += ALPHABET[index];
         }
 
@@ -537,24 +528,21 @@ class Util {
     }
 
     // Similar to newId()
-    static uuid () {
+    static uuid() {
         return crypto.randomUUID();
     }
 
     // Returns string
-    static shortId (id) {
-        return id ?
-            `${id.slice(0, 3).toUpperCase()}` :
-            '';
+    static shortId(id) {
+        return id ? `${id.slice(0, 3).toUpperCase()}` : '';
     }
 
     // Input 2d array of strings or stringables
     // Output string formatted like a spreadsheet, suitable for printing
-    static toChartString (grid) {
+    static toChartString(grid) {
         let maxLengths = new Array(grid[0].length).fill(1);
 
         for (let r = 0; r < grid.length; r++) {
-
             for (let c = 0; c < grid[4].length; c++) {
                 const len = String(grid[r][c]).length;
 
@@ -564,17 +552,17 @@ class Util {
             }
         }
 
-        return grid.map(
-            row => row.map(
-                (cell, c) => String(cell).padEnd(maxLengths[c])
+        return grid
+            .map((row) =>
+                row
+                    .map((cell, c) => String(cell).padEnd(maxLengths[c]))
+                    .join(' '),
             )
-            .join(' ')
-        )
-        .join('\n');
+            .join('\n');
     }
 
     // grid is of type string[][]
-    static textGrid (grid, width, height) {
+    static textGrid(grid, width, height) {
         // These currently need to be set to the dimensions shown in the top of the terminal window.
         Util.SCREEN_WIDTH = width || 181;
         Util.SCREEN_HEIGHT = height || 46;
@@ -589,9 +577,7 @@ class Util {
             const lineSets = [];
 
             for (let c = 0; c < grid[0].length; c++) {
-                lineSets.push(
-                    Util.boxAsLines(grid, r, c)
-                );
+                lineSets.push(Util.boxAsLines(grid, r, c));
 
                 // Util.logDebug(`Util.textGrid(), lineSets is ${Util.stringify(lineSets)}`);
             }
@@ -605,15 +591,15 @@ class Util {
         return lines.join('\n');
     }
 
-    static boxAsLines (grid, row, column) {
+    static boxAsLines(grid, row, column) {
         const boxHeight = Math.floor(
-            (Util.SCREEN_HEIGHT - grid.length - 1) / grid.length
+            (Util.SCREEN_HEIGHT - grid.length - 1) / grid.length,
         );
 
         const topRow = grid[0];
 
         const boxWidth = Math.floor(
-            (Util.SCREEN_WIDTH - topRow.length - 1) / topRow.length
+            (Util.SCREEN_WIDTH - topRow.length - 1) / topRow.length,
         );
 
         const boxLines = grid[row][column].split('\n');
@@ -622,15 +608,11 @@ class Util {
         // Util.logDebug('lines[0].length is ' + lines[0].length + ', and boxWidth is ' + boxWidth);
 
         for (let i = 0; i < boxHeight - 1; i++) {
-            outLines.push(
-                Util.padSides(boxLines[i], boxWidth)
-            );
+            outLines.push(Util.padSides(boxLines[i], boxWidth));
         }
 
         if (boxLines[boxHeight - 1]) {
-            outLines.push(
-                Util.padSides('...', boxWidth)
-            );
+            outLines.push(Util.padSides('...', boxWidth));
         }
 
         // Util.logDebug(`Util.boxAsLines(), current box contains: ${grid[row][column]}. boxLines is ${JSON.stringify(boxLines, undefined, '    ')},\n  outLines is ${JSON.stringify(outLines, undefined, '    ')}`)
@@ -638,7 +620,7 @@ class Util {
         return outLines;
     }
 
-    static stitchBoxRow (lineSets) {
+    static stitchBoxRow(lineSets) {
         const WALL = '|';
         const lines = [];
 
@@ -659,29 +641,25 @@ class Util {
 
     // Input string[]
     // Returns string summarizing redundancies, like a histogram.
-    static arraySummary (a) {
+    static arraySummary(a) {
         const dict = {};
 
-        a.forEach(
-            s => {
-                if (dict[s]) {
-                    dict[s]++;
-                }
-                else {
-                    dict[s] = 1;
-                }
+        a.forEach((s) => {
+            if (dict[s]) {
+                dict[s]++;
+            } else {
+                dict[s] = 1;
             }
-        );
+        });
 
-        const archetypes = Object.keys(dict)
-            .map(
-                s => `${s} x${Util.abbrvNumber(dict[s])}`
-            );
+        const archetypes = Object.keys(dict).map(
+            (s) => `${s} x${Util.abbrvNumber(dict[s])}`,
+        );
 
         return archetypes.join(', ');
     }
 
-    static repeat (str, n) {
+    static repeat(str, n) {
         let outStr = '';
         for (let i = 0; i < n; i++) {
             outStr += str;
@@ -690,23 +668,20 @@ class Util {
         return outStr;
     }
 
-    static formatProp (object, propName) {
+    static formatProp(object, propName) {
         const value = object[propName];
-        if (! Util.legit(value)) {
+        if (!Util.legit(value)) {
             return '';
         }
 
         // Later handle special and modification objects better.
-        return `${ propName }: ${ Util.formatExpression(value) }`;
+        return `${propName}: ${Util.formatExpression(value)}`;
     }
 
-    static formatExpression (input) {
+    static formatExpression(input) {
         const type = typeof input;
         if (Util.isArray(input)) {
-            return input.map(
-                x => Util.formatExpression(x)
-            )
-            .join(', ');
+            return input.map((x) => Util.formatExpression(x)).join(', ');
         }
         if (type === 'object') {
             return Util.formatObj(input);
@@ -715,22 +690,19 @@ class Util {
         return input;
     }
 
-    static formatObj (obj) {
+    static formatObj(obj) {
         // if (typeof obj !== 'object') {
         //     return obj;
         // }
 
         const pairs = Object.keys(obj)
-            .map(
-                key => `${key}: ${obj[key]}`
-            )
+            .map((key) => `${key}: ${obj[key]}`)
             .join(', ');
         return `{${pairs}}`;
     }
 
-    static containsVowels (s) {
-        const chars = s.toUpperCase()
-            .split('');
+    static containsVowels(s) {
+        const chars = s.toUpperCase().split('');
 
         for (let char of chars) {
             if (Util.contains('AEIOUY', char)) {
@@ -741,68 +713,61 @@ class Util {
         return false;
     }
 
-    static capitalized (s) {
-        if (! Util.exists(s)) {
+    static capitalized(s) {
+        if (!Util.exists(s)) {
             return '';
-        }
-        else if (s.length === 1) {
+        } else if (s.length === 1) {
             return s.toUpperCase();
         }
         // Controversially, interpret no-vowel strings as acronyms
-        else if (! Util.containsVowels(s)) {
+        else if (!Util.containsVowels(s)) {
             return s.toUpperCase();
         }
 
-        return s[0].toUpperCase() +
-            s.slice(1);
-            // s.slice(1).toLowerCase();
+        return s[0].toUpperCase() + s.slice(1);
+        // s.slice(1).toLowerCase();
     }
 
-    static uncapitalized (s) {
-        if (! Util.exists(s)) {
+    static uncapitalized(s) {
+        if (!Util.exists(s)) {
             return '';
-        }
-        else if (s.length === 1) {
+        } else if (s.length === 1) {
             return s.toLowerCase();
         }
 
-        return s[0].toLowerCase() +
-            s.slice(1);
+        return s[0].toLowerCase() + s.slice(1);
     }
 
-    static capitalizedAllWords (s) {
-        if (! Util.exists(s)) {
+    static capitalizedAllWords(s) {
+        if (!Util.exists(s)) {
             return '';
         }
 
         const words = s.split(' ');
 
-        return words.map(
-            w => Util.capitalized(w)
-        ).join(' ');
+        return words.map((w) => Util.capitalized(w)).join(' ');
     }
 
-    static toCamelCase (s) {
-        if (! Util.exists(s)) {
+    static toCamelCase(s) {
+        if (!Util.exists(s)) {
             return '';
         }
 
         const words = s.split(/\s/);
-        const tail = words.slice(1)
-            .map(sub => Util.capitalized(sub))
+        const tail = words
+            .slice(1)
+            .map((sub) => Util.capitalized(sub))
             .join('');
 
-        return words[0].toLowerCase() +
-            tail;
+        return words[0].toLowerCase() + tail;
     }
 
     // input: 'dolphinWithWings'
     // returns: 'Dolphin With Wings'
-    static fromCamelCase (s) {
-        if (! Util.exists(s)) {
+    static fromCamelCase(s) {
+        if (!Util.exists(s)) {
             return '';
-        }
-        else if (s.length === 1) {
+        } else if (s.length === 1) {
             return s.toUpperCase();
         }
 
@@ -813,12 +778,12 @@ class Util {
             // Util.logDebug(`fromCamelCase(), s is ${s}, i is ${i}, s[i] is ${s[i]}`)
 
             if (Util.isCapitalized(s[i])) {
-                if (Util.isCapitalized(s[i-1])) {
+                if (Util.isCapitalized(s[i - 1])) {
                     // Detect acronym words and leave them uppercase.
                     // eg: openHTMLFile
-                    const followedByLowercase = (i < s.length - 1) &&
-                        ! Util.isCapitalized(s[i+1]);
-                    if (! followedByLowercase) {
+                    const followedByLowercase =
+                        i < s.length - 1 && !Util.isCapitalized(s[i + 1]);
+                    if (!followedByLowercase) {
                         continue;
                     }
                 }
@@ -844,18 +809,17 @@ class Util {
         const lastWord = s.slice(lastCapital);
         words.push(lastWord);
 
-        return words.map(
-            // Do not change acronyms
-            w => Util.isAllCaps(w) ?
-                w :
-                Util.capitalized(w)
-        )
-        .join(' ');
+        return words
+            .map(
+                // Do not change acronyms
+                (w) => (Util.isAllCaps(w) ? w : Util.capitalized(w)),
+            )
+            .join(' ');
     }
 
     // center-aligns string in spaces, to a specified total length.
     // ('foo', 7) => '  foo  '
-    static padSides (string, length) {
+    static padSides(string, length) {
         // Later could detect if 'string' is a nonstring and convert it.
         string = string || '';
         length = Math.floor(length);
@@ -867,21 +831,16 @@ class Util {
         }
 
         const padAmount = leftover / 2;
-        const left = ' '.repeat(
-            Math.floor(padAmount)
-        );
+        const left = ' '.repeat(Math.floor(padAmount));
 
-        const right = ' '.repeat(
-            Math.ceil(padAmount)
-        );
+        const right = ' '.repeat(Math.ceil(padAmount));
 
         // return left + string + right;
         return (left + string).padEnd(length);
     }
 
-    static testPadSides () {
+    static testPadSides() {
         for (let l = 1; l < 10; l++) {
-
             for (let sl = 0; sl < 3; sl++) {
                 const input = ' 👁 e'.repeat(sl);
                 const output = Util.padSides(input, l);
@@ -896,28 +855,23 @@ class Util {
         }
     }
 
-    static alphanumericTransition (string, i2) {
-        const digitStart = Util.isNumeric(
-            string[i2 - 1]
-        );
+    static alphanumericTransition(string, i2) {
+        const digitStart = Util.isNumeric(string[i2 - 1]);
 
-        const digitEnd = Util.isNumeric(
-            string[i2]
-        );
+        const digitEnd = Util.isNumeric(string[i2]);
 
-        return digitStart && ! digitEnd ||
-            ! digitStart && digitEnd;
+        return (digitStart && !digitEnd) || (!digitStart && digitEnd);
     }
 
-    static testCamelCase () {
+    static testCamelCase() {
         const tests = [
             ['Hector Breaker Of Horses', 'hectorBreakerOfHorses'],
             ['Cellar Door', 'cellarDoor'],
             ['C Deck', 'cDeck'],
-            ['Awakening', 'awakening']
+            ['Awakening', 'awakening'],
         ];
 
-        tests.forEach(t => {
+        tests.forEach((t) => {
             const camelized = Util.toCamelCase(t[0]);
             const uncamelized = Util.fromCamelCase(t[1]);
 
@@ -931,29 +885,30 @@ class Util {
     }
 
     // Returns true if we are executing this in a browser.
-    static inBrowser () {
-        return typeof window !== 'undefined' &&
-            typeof window.document !== 'undefined';
+    static inBrowser() {
+        return (
+            typeof window !== 'undefined' &&
+            typeof window.document !== 'undefined'
+        );
     }
 
     // Returns string with '<'s in it.
-    static htmlPassage (content) {
+    static htmlPassage(content) {
         return Util.asElement(content, 'p');
     }
 
     // Returns string with '<'s in it.
-    static asElement (content, elementName) {
+    static asElement(content, elementName) {
         // TODO make content HTML-friendly, escape etc.
         return `<${elementName}>${content}</${elementName}>`;
     }
 
-    static htmlElement (tag, attributes, text) {
+    static htmlElement(tag, attributes, text) {
         const el = document.createElement(tag);
 
         if (Util.isString(attributes)) {
             el.setAttribute('class', attributes);
-        }
-        else if (attributes) {
+        } else if (attributes) {
             // Interpret as an options dict.
             for (let key in attributes) {
                 el.setAttribute(key, attributes[key]);
@@ -967,7 +922,7 @@ class Util {
         return el;
     }
 
-    static pElement (text, className) {
+    static pElement(text, className) {
         const p = document.createElement('p');
 
         p.innerHTML = text;
@@ -979,7 +934,7 @@ class Util {
         return p;
     }
 
-    static button (text, className, func) {
+    static button(text, className, func) {
         const b = document.createElement('button');
 
         b.innerHTML = text;
@@ -993,123 +948,104 @@ class Util {
         return b;
     }
 
-    static clearHtmlChildren (element) {
+    static clearHtmlChildren(element) {
         while (element.firstChild) {
             element.removeChild(element.firstChild);
         }
     }
 
     // True when input is a number or a string containing digits.
-    static isNumeric (x) {
+    static isNumeric(x) {
         return /[0-9]/.test(x);
     }
 
     // Note that typeof NaN is also 'number',
     // but it is still despicable.
-    static isNumber (x) {
-        return typeof x === 'number' &&
-            ! Util.isNaN(x);
+    static isNumber(x) {
+        return typeof x === 'number' && !Util.isNaN(x);
     }
 
-    static isString (x) {
+    static isString(x) {
         return typeof x === 'string';
     }
 
-    static isNaN (x) {
+    static isNaN(x) {
         return Number.isNaN(x);
     }
 
-    static isObject (x) {
-        return typeof x === 'object' &&
-            x !== null;
+    static isObject(x) {
+        return typeof x === 'object' && x !== null;
     }
 
-    static isFunction (x) {
+    static isFunction(x) {
         return typeof x === 'function';
     }
 
-    static isArray (x) {
+    static isArray(x) {
         // Later make this more sophisticated, or use a library.
-        return x &&
+        return (
+            x &&
             typeof x.length === 'number' &&
-            ! Util.isString(x) &&
+            !Util.isString(x) &&
             x.length >= 0 &&
-            (x.length === 0 || x[0] !== undefined);
+            (x.length === 0 || x[0] !== undefined)
+        );
     }
 
-    static isPrimitive (x) {
+    static isPrimitive(x) {
         if (x === undefined || x === null) {
             return true;
         }
 
-        return [
-            'boolean',
-            'symbol',
-            'bigint',
-            'number',
-            'string',
-        ].includes(
-            typeof x
+        return ['boolean', 'symbol', 'bigint', 'number', 'string'].includes(
+            typeof x,
         );
     }
 
-    static array (x) {
+    static array(x) {
         return Util.isArray(x) ? x : [x];
     }
 
-    static unique (array) {
+    static unique(array) {
         return Array.from(new Set(array));
     }
 
-    static union (a1, a2) {
-        return Util.unique(
-            (a1 || []).concat(a2 || [])
-        );
+    static union(a1, a2) {
+        return Util.unique((a1 || []).concat(a2 || []));
     }
 
     // Returns a shallow copy of a array.
-    static arrayCopy (a) {
-        return a.map(x => x);
+    static arrayCopy(a) {
+        return a.map((x) => x);
     }
 
-    static clone (obj) {
+    static clone(obj) {
         return _.cloneDeep(obj);
     }
 
-    static round (n, precision) {
+    static round(n, precision) {
         return _.round(n, precision);
     }
 
-    static commaNumber (n) {
+    static commaNumber(n) {
         return commaNumber(n);
     }
 
-    static abbrvNumber (n) {
+    static abbrvNumber(n) {
         let output = '';
         const pos = Math.abs(n);
 
         if (pos < 1000) {
             output = pos.toString();
-        }
-        else if (pos < 1e6) {
-            output = _.round(pos / 1000)
-                .toFixed(0)
-                + 'k';
-        }
-        else if (pos < 1e9) {
-            output = _.round(pos / 1e6)
-                .toFixed(0)
-                + 'mn';
-        }
-        else {
-            output = _.round(pos / 1e9)
-                .toFixed(0)
-                + 'bn';
+        } else if (pos < 1e6) {
+            output = _.round(pos / 1000).toFixed(0) + 'k';
+        } else if (pos < 1e9) {
+            output = _.round(pos / 1e6).toFixed(0) + 'mn';
+        } else {
+            output = _.round(pos / 1e9).toFixed(0) + 'bn';
         }
 
-        return n >= 0 ?
-            output :
-            `-${output}`;
+        return n >= 0 ? output : `-${output}`;
     }
 
     // returns number
@@ -1118,7 +1054,7 @@ class Util {
     // }
 
     // Returns string
-    static prettyDistance (meters) {
+    static prettyDistance(meters) {
         meters = Math.abs(meters);
 
         const AU = 149597870700;
@@ -1128,66 +1064,52 @@ class Util {
             const rounded = _.round(meters, 2);
 
             return `${rounded} m`;
-        }
-        else if (meters < 1000) {
+        } else if (meters < 1000) {
             const rounded = _.round(meters);
 
             return `${rounded} m`;
-        }
-        else if (meters < 3000) {
+        } else if (meters < 3000) {
             const klicks = _.round(meters / 1000, 1);
 
             return `${klicks} km`;
-        }
-        else if (meters < AU * 0.1) {
-            const klicks = Util.commaNumber(
-                _.round(meters / 1000)
-            );
+        } else if (meters < AU * 0.1) {
+            const klicks = Util.commaNumber(_.round(meters / 1000));
 
             return `${klicks} km`;
-        }
-        else if (meters < AU * 3) {
-            const au = _.round(meters / AU, 1)
-                .toFixed(1);
+        } else if (meters < AU * 3) {
+            const au = _.round(meters / AU, 1).toFixed(1);
 
             return `${au} AU`;
-        }
-        else if (meters < LIGHT_YEAR * 0.1) {
-            const au = Util.commaNumber(
-                _.round(meters / AU)
-            );
+        } else if (meters < LIGHT_YEAR * 0.1) {
+            const au = Util.commaNumber(_.round(meters / AU));
 
             return `${au} AU`;
         } else if (meters < LIGHT_YEAR * 3) {
             const ly = _.round(meters / LIGHT_YEAR, 1);
 
             return `${ly} lightyears`;
-        }
-        else {
-            const ly = Util.commaNumber(
-                _.round(meters / LIGHT_YEAR)
-            );
+        } else {
+            const ly = Util.commaNumber(_.round(meters / LIGHT_YEAR));
 
             return `${ly} lightyears`;
         }
     }
 
-    static testPrettyDistance () {
+    static testPrettyDistance() {
         for (let n = 0.197842357; n < 94607304725808000000; n = 2 * n) {
             console.log(Util.prettyDistance(n));
         }
     }
 
-    static prettyMeters (meters) {
+    static prettyMeters(meters) {
         return `${Util.commaNumber(meters)}m`;
     }
 
-    static prettyTime (seconds) {
+    static prettyTime(seconds) {
         if (seconds < 59.5) {
             const rounded = _.round(seconds);
             return `${rounded} seconds`;
-        }
-        else if (seconds < 90) {
+        } else if (seconds < 90) {
             return `1 minute`;
         }
         // 3570 seconds is 59.5 minutes
@@ -1208,14 +1130,13 @@ class Util {
         else if (seconds < 31556736) {
             const days = _.round(seconds / 86400, 1);
             return `${days} days`;
-        }
-        else {
+        } else {
             const years = _.round(seconds / 31556736, 1);
             return `${years} years`;
         }
     }
 
-    static asBar (n) {
+    static asBar(n) {
         let bar = '';
 
         for (let i = 0; i < n; i++) {
@@ -1226,18 +1147,15 @@ class Util {
     }
 
     // Returns the input number rounded up or down to 1 sigfig.
-    static sigfigRound (n, sigfigs) {
+    static sigfigRound(n, sigfigs) {
         sigfigs = sigfigs || 1;
 
         const log = Math.log10(Math.abs(n));
 
-        return _.round(
-            n,
-            sigfigs - (1 + Math.floor(log))
-        );
+        return _.round(n, sigfigs - (1 + Math.floor(log)));
     }
 
-    static testSigfigRound () {
+    static testSigfigRound() {
         for (let f = 1; f < 3; f++) {
             for (let n = 1; n < 1000000; n++) {
                 const output = Util.sigfigRound(n, f);
@@ -1251,7 +1169,9 @@ class Util {
 
                     // Note that this test does not check whether it gets rid of TOO MANY sigfigs. In the case of (1950, 2) this seems hard to test for. It is correct to oversimplify to 2000, which has only 1 sigfig.
 
-                    Util.logError(`In testSigfigRound(), sigfigRound(${n}, ${f}) === ${output}. This has ${figs} sigfigs, but it should have ${f}.`);
+                    Util.logError(
+                        `In testSigfigRound(), sigfigRound(${n}, ${f}) === ${output}. This has ${figs} sigfigs, but it should have ${f}.`,
+                    );
                     return false;
                 }
             }
@@ -1260,8 +1180,8 @@ class Util {
         return true;
     }
 
-    static sigfigsOf (n) {
-        if (! Util.isNumber(n)) {
+    static sigfigsOf(n) {
+        if (!Util.isNumber(n)) {
             n = parseFloat(n);
         }
 
@@ -1274,13 +1194,11 @@ class Util {
                 // eg 0.0705 => 3
                 const zeroes = Util.charCountAtStart(parts[1], '0');
                 return parts[1].length - zeroes;
-            }
-            else {
+            } else {
                 // eg 400.01 => 5
                 return parts[0].length + parts[1].length;
             }
-        }
-        else {
+        } else {
             // eg 108000 => 3
             const zeroes = Util.charCountAtEnd(s, '0');
             return s.length - zeroes;
@@ -1288,18 +1206,18 @@ class Util {
     }
 
     // Call like 'await Util.sleep(6);'
-    static sleep (seconds) {
-        if (! Util.exists(seconds)) {
+    static sleep(seconds) {
+        if (!Util.exists(seconds)) {
             seconds = 1;
         }
 
-        return new Promise(
-            funcWhenResolved => setTimeout(funcWhenResolved, seconds * 1000)
+        return new Promise((funcWhenResolved) =>
+            setTimeout(funcWhenResolved, seconds * 1000),
         );
     }
 
     // eg ('00705', '0') => 2
-    static charCountAtStart (str, char) {
+    static charCountAtStart(str, char) {
         for (let i = 0; i < str.length; i++) {
             if (str[i] !== char) {
                 return i;
@@ -1310,38 +1228,34 @@ class Util {
     }
 
     // eg ('108000', '0') => 3
-    static charCountAtEnd (str, char) {
+    static charCountAtEnd(str, char) {
         for (let i = str.length - 1; i >= 0; i--) {
             if (str[i] !== char) {
-                return (str.length - 1) - i;
+                return str.length - 1 - i;
             }
         }
 
         return str.length;
     }
 
-    static isCapitalized (s) {
+    static isCapitalized(s) {
         return /[A-Z]/.test(s[0]);
     }
 
-    static isAllCaps (s) {
+    static isAllCaps(s) {
         // TODO implement this.
         return false;
     }
 
-    static stringify (x) {
-        return JSON.stringify(
-            x,
-            undefined,
-            '    '
-        );
+    static stringify(x) {
+        return JSON.stringify(x, undefined, '    ');
     }
 
     // LATER - desired funcs:
     // static yaml (x) {}
     // static safeToStringify (x) {}
 
-    static log (input, tag) {
+    static log(input, tag) {
         // Later: Use chalk functions instead.
         // const TAG_COLORS = {
         //     error: 'red',
@@ -1361,43 +1275,39 @@ class Util {
 
         const dateTime = moment().format('YYYY MMM D hh:mm:ss.S');
 
-        const info = Util.isString(input) ?
-            input :
-            Util.stringify(input);
+        const info = Util.isString(input) ? input : Util.stringify(input);
 
         // Later: Red error and beacon text
-        console.log(`  ${tagStr} (${ dateTime }) \n${ info }\n`);
+        console.log(`  ${tagStr} (${dateTime}) \n${info}\n`);
     }
 
-    static logDebug (input) {
+    static logDebug(input) {
         Util.log(input, 'debug');
     }
 
-    static logWarn (input) {
+    static logWarn(input) {
         Util.log(input, 'warn');
     }
 
-    static logError (input) {
+    static logError(input) {
         Util.log(input, 'error');
     }
 
-    static error (summary) {
-        throw new Error(
-            Util.stringify(summary)
-        );
+    static error(summary) {
+        throw new Error(Util.stringify(summary));
     }
 
     // alias for the above.
-    static throw (summary) {
+    static throw(summary) {
         return Util.error(summary);
     }
 
-    static makeEnum (array, allLower = false) {
+    static makeEnum(array, allLower = false) {
         const dict = {};
         for (let val of array) {
-            const key = allLower ?
-                Util.uncapitalized(val) :
-                Util.capitalized(val);
+            const key = allLower
+                ? Util.uncapitalized(val)
+                : Util.capitalized(val);
 
             dict[key] = Util.uncapitalized(val);
         }
@@ -1405,35 +1315,28 @@ class Util {
         return dict;
     }
 
-    static withProp (array, key) {
-        return array.filter(x => x[key]);
+    static withProp(array, key) {
+        return array.filter((x) => x[key]);
     }
 
-    static toJson (x) {
-        return x && Util.isFunction(x.toJson) ?
-            x.toJson() :
-            x;
+    static toJson(x) {
+        return x && Util.isFunction(x.toJson) ? x.toJson() : x;
     }
 
     // Useful for dicts of objects like wGenerator.aliasTables
-    static dictToJson (dict) {
+    static dictToJson(dict) {
         const serialized = {};
 
-        Object.keys(dict)
-            .forEach(
-                key => {
-                    const value = dict[key];
+        Object.keys(dict).forEach((key) => {
+            const value = dict[key];
 
-                    serialized[key] = (value && value.toJson) ?
-                        value.toJson() :
-                        value;
-                }
-            );
+            serialized[key] = value && value.toJson ? value.toJson() : value;
+        });
 
         return serialized;
     }
 
-    static valuesAsIDs (obj) {
+    static valuesAsIDs(obj) {
         const converted = {};
 
         for (let key in obj) {
@@ -1445,7 +1348,7 @@ class Util {
         return converted;
     }
 
-    static certainKeysOf (obj, keyArray) {
+    static certainKeysOf(obj, keyArray) {
         const output = {};
 
         for (let key of keyArray) {
@@ -1456,17 +1359,16 @@ class Util {
     }
 
     // Myers-Briggs Type Indicator (personality category)
-    static mbti () {
+    static mbti() {
         return [
             Util.randomOf(['I', 'E']),
             Util.randomOf(['S', 'N']),
             Util.randomOf(['T', 'F']),
-            Util.randomOf(['P', 'J'])
-        ]
-        .join('');
+            Util.randomOf(['P', 'J']),
+        ].join('');
     }
 
-    static testAll () {
+    static testAll() {
         Util.testPrettyDistance();
         Util.testCamelCase();
         Util.testPadSides();
@@ -1483,12 +1385,12 @@ Util.sample = Util.sampleFrom = Util.randomOf;
 
 Util.DEFAULTS = {
     ROWCOUNT: 12,
-    COLCOUNT: 12
+    COLCOUNT: 12,
 };
 
 Util.NODE_TYPES = {
     region: 'region',
-    location: 'location'  // deprecated
+    location: 'location', // deprecated
 };
 
 // These are like preselected color profiles.
@@ -1502,7 +1404,7 @@ Util.COLORS = {
     purple: '\x1b[1;37;45m',
     grey: '\x1b[1;30;47m',
     black: '\x1b[1;37;40m',
-    balance: '\x1b[0m'
+    balance: '\x1b[0m',
 };
 
 module.exports = Util;

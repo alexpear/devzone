@@ -11,11 +11,11 @@ const events = loadEvents(csvPath);
 const todayEvents = getEventsForToday(events, 'UTC');
 
 if (todayEvents.length === 0) {
-  console.log('No events found for today.');
-  process.exit(0);
+    console.log('No events found for today.');
+    process.exit(0);
 }
 
 for (const event of todayEvents) {
-  const text = formatPost(event);
-  await postToBluesky(text);
+    const text = formatPost(event);
+    await postToBluesky(text);
 }

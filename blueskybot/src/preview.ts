@@ -10,13 +10,13 @@ const events = loadEvents(csvPath);
 const random = process.argv.includes('--random');
 
 if (random) {
-  const pick = events[Math.floor(Math.random() * events.length)];
-  console.log(formatPost(pick));
+    const pick = events[Math.floor(Math.random() * events.length)];
+    console.log(formatPost(pick));
 } else {
-  const today = getEventsForToday(events, undefined);
-  if (today.length === 0) {
-    console.log('No events found for today.');
-  } else {
-    for (const e of today) console.log(formatPost(e));
-  }
+    const today = getEventsForToday(events, undefined);
+    if (today.length === 0) {
+        console.log('No events found for today.');
+    } else {
+        for (const e of today) console.log(formatPost(e));
+    }
 }

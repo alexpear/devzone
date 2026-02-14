@@ -5,7 +5,7 @@ class Hair {
 }
 
 class Eyes {
-    shape: 'v'|'u'|'ellipse'|'lemon';
+    shape: 'v' | 'u' | 'ellipse' | 'lemon';
     wideness: number;
     tallness: number;
     apartness: number;
@@ -18,28 +18,30 @@ class Nose {
 }
 
 class Mouth {
-    shape: 'curve'|'ellipse';
+    shape: 'curve' | 'ellipse';
     curvature?: number;
     wideness: number;
     tallness?: number;
 }
 
 class Face {
-    canvas: HTMLCanvasElement = document.getElementById('faceCanvas') as HTMLCanvasElement;
+    canvas: HTMLCanvasElement = document.getElementById(
+        'faceCanvas',
+    ) as HTMLCanvasElement;
     canvasCtx: CanvasRenderingContext2D = this.canvas.getContext('2d');
-    xmid: number = this.canvas.width / 2;;
+    xmid: number = this.canvas.width / 2;
     hair: Hair;
     eyes: Eyes;
     nose: Nose;
     mouth: Mouth;
 
-    constructor () {
+    constructor() {
         this.randomize();
 
         (window as unknown).face = this;
     }
 
-    randomize (): void {
+    randomize(): void {
         const PARAM_RANGES = this.paramRanges();
 
         for (const shapeType in PARAM_RANGES) {
@@ -59,7 +61,7 @@ class Face {
                 ];
 
                 this[shapeType][param] = Util.randomRange(
-                    range[0], 
+                    range[0],
                     range[1],
                     1, // decimalPlaces
                 );
@@ -67,7 +69,7 @@ class Face {
         }
     }
 
-    paramRanges (): Record<string, object> {
+    paramRanges(): Record<string, object> {
         return {
             hair: {
                 bald: {},
@@ -116,9 +118,9 @@ class Face {
         };
     }
 
-    render (): void {
+    render(): void {
         this.canvasCtx.strokeStyle = 'black';
-        this.canvasCtx.lineWidth = 10; 
+        this.canvasCtx.lineWidth = 10;
 
         this.renderEyes();
         this.renderNose();
@@ -126,43 +128,37 @@ class Face {
         this.renderHair();
     }
 
-    renderEyes (): void {
+    renderEyes(): void {
         if (this.eyes.shape === 'u') {
             this.renderUEyes();
-        }
-        else if (this.eyes.shape === 'v') {
+        } else if (this.eyes.shape === 'v') {
             this.renderVEyes();
-        }
-        else if (this.eyes.shape === 'lemon') {
+        } else if (this.eyes.shape === 'lemon') {
             this.renderLemonEyes();
-        }
-        else if (this.eyes.shape === 'ellipse') {
+        } else if (this.eyes.shape === 'ellipse') {
             this.renderEllipseEyes();
         }
     }
     renderUEyes(): void {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     renderLemonEyes(): void {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
     renderEllipseEyes(): void {
-        throw new Error("Method not implemented.");
+        throw new Error('Method not implemented.');
     }
 
-    renderVEyes (): void {
+    renderVEyes(): void {
         this.drawVEye(this.xmid - this.eyes.apartness - this.eyes.wideness * 2);
         this.drawVEye(this.xmid + this.eyes.apartness);
     }
 
-    drawVEye (xstart): void {
+    drawVEye(xstart): void {
         const ydefault = this.canvas.height / 2;
 
         this.canvasCtx.beginPath();
-        this.canvasCtx.moveTo(
-            xstart,
-            ydefault - this.eyes.tallness,
-        );
+        this.canvasCtx.moveTo(xstart, ydefault - this.eyes.tallness);
         this.canvasCtx.lineTo(
             xstart + this.eyes.wideness,
             ydefault + this.eyes.tallness,
@@ -174,7 +170,7 @@ class Face {
         this.canvasCtx.stroke();
     }
 
-    renderNose (): void {
+    renderNose(): void {
         if (this.nose.shape === 'inverted7') {
             this.renderInverted7Nose();
         }
@@ -186,44 +182,34 @@ class Face {
         // }
     }
 
-    renderInverted7Nose (): void {
-        const ydefault = this.canvas.height * 2 / 3;
+    renderInverted7Nose(): void {
+        const ydefault = (this.canvas.height * 2) / 3;
         this.canvasCtx.beginPath();
-        this.canvasCtx.moveTo(
-            this.xmid,
-            ydefault - this.nose.size,
-        );
+        this.canvasCtx.moveTo(this.xmid, ydefault - this.nose.size);
         this.canvasCtx.lineTo(
             this.xmid + this.nose.size,
             ydefault + this.nose.size,
         );
-        this.canvasCtx.lineTo(
-            this.xmid,
-            ydefault + this.nose.size,
-        );
+        this.canvasCtx.lineTo(this.xmid, ydefault + this.nose.size);
         this.canvasCtx.stroke();
     }
 
-    renderMouth (): void {
+    renderMouth(): void {
         if (this.mouth.shape === 'curve') {
             this.renderCurveMouth();
-        }
-        else if (this.mouth.shape === 'ellipse') {
+        } else if (this.mouth.shape === 'ellipse') {
             this.renderEllipseMouth();
         }
     }
 
-    renderCurveMouth (): void {
-        const ydefault = this.canvas.height * 5 / 6;
+    renderCurveMouth(): void {
+        const ydefault = (this.canvas.height * 5) / 6;
         this.canvasCtx.beginPath();
-        this.canvasCtx.moveTo(
-            this.xmid - this.mouth.wideness,
-            ydefault,
-        );
+        this.canvasCtx.moveTo(this.xmid - this.mouth.wideness, ydefault);
         this.canvasCtx.quadraticCurveTo(
-            this.xmid, 
+            this.xmid,
             ydefault - this.mouth.curvature * this.mouth.wideness * 2,
-            this.xmid + this.mouth.wideness, 
+            this.xmid + this.mouth.wideness,
             ydefault,
         );
         this.canvasCtx.stroke();
@@ -234,8 +220,8 @@ class Face {
         // });
     }
 
-    renderEllipseMouth (): void {
-        const ydefault = this.canvas.height * 5 / 6;
+    renderEllipseMouth(): void {
+        const ydefault = (this.canvas.height * 5) / 6;
         this.canvasCtx.beginPath();
         this.canvasCtx.ellipse(
             this.xmid,
@@ -249,11 +235,9 @@ class Face {
         this.canvasCtx.stroke();
     }
 
-    renderHair (): void {
+    renderHair(): void {}
 
-    }
-
-    json (): Record<string, object> {
+    json(): Record<string, object> {
         return {
             hair: this.hair,
             eyes: this.eyes,
@@ -262,15 +246,11 @@ class Face {
         };
     }
 
-    toString (): string {
-        return JSON.stringify(
-            this.json(),
-            undefined,
-            '    '
-        );
+    toString(): string {
+        return JSON.stringify(this.json(), undefined, '    ');
     }
 
-    static run (): void {
+    static run(): void {
         window.addEventListener('load', () => {
             const face = new Face();
 
