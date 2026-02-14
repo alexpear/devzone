@@ -42,7 +42,7 @@ class Face {
     }
 
     randomize(): void {
-        const PARAM_RANGES = this.paramRanges();
+        const PARAM_RANGES: Record<string, object> = this.paramRanges();
 
         for (const shapeType in PARAM_RANGES) {
             const shapeList: string[] = Object.keys(PARAM_RANGES[shapeType]);
@@ -154,8 +154,8 @@ class Face {
         this.drawVEye(this.xmid + this.eyes.apartness);
     }
 
-    drawVEye(xstart): void {
-        const ydefault = this.canvas.height / 2;
+    drawVEye(xstart: number): void {
+        const ydefault: number = this.canvas.height / 2;
 
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(xstart, ydefault - this.eyes.tallness);
@@ -183,7 +183,7 @@ class Face {
     }
 
     renderInverted7Nose(): void {
-        const ydefault = (this.canvas.height * 2) / 3;
+        const ydefault: number = (this.canvas.height * 2) / 3;
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(this.xmid, ydefault - this.nose.size);
         this.canvasCtx.lineTo(
@@ -203,7 +203,7 @@ class Face {
     }
 
     renderCurveMouth(): void {
-        const ydefault = (this.canvas.height * 5) / 6;
+        const ydefault: number = (this.canvas.height * 5) / 6;
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(this.xmid - this.mouth.wideness, ydefault);
         this.canvasCtx.quadraticCurveTo(
@@ -221,7 +221,7 @@ class Face {
     }
 
     renderEllipseMouth(): void {
-        const ydefault = (this.canvas.height * 5) / 6;
+        const ydefault: number = (this.canvas.height * 5) / 6;
         this.canvasCtx.beginPath();
         this.canvasCtx.ellipse(
             this.xmid,
@@ -252,7 +252,7 @@ class Face {
 
     static run(): void {
         window.addEventListener('load', () => {
-            const face = new Face();
+            const face: Face = new Face();
 
             face.render();
 
@@ -262,5 +262,3 @@ class Face {
 }
 
 Face.run();
-
-// TODO tslint should ask for type tags

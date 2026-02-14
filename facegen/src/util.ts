@@ -40,20 +40,20 @@ class Util {
         decimalPlaces?: number,
     ): number {
         if (maxExclusive < minInclusive) {
-            const temp = minInclusive;
+            const temp: number = minInclusive;
             minInclusive = maxExclusive;
             maxExclusive = temp;
         }
 
-        const unrounded =
+        const unrounded: number =
             Math.random() * (maxExclusive - minInclusive) + minInclusive;
 
-        const factor = Math.pow(10, decimalPlaces || 0);
+        const factor: number = Math.pow(10, decimalPlaces || 0);
         return Math.round(unrounded * factor) / factor;
     }
 
     static log(input: unknown): void {
-        const info =
+        const info: string =
             typeof input === 'string'
                 ? input
                 : JSON.stringify(input, undefined, '    ');
