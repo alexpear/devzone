@@ -9,4 +9,20 @@ export default tseslint.config(
     {
         ignores: ['node_modules/', 'facegen/dist/', 'util.js'],
     },
+    {
+        files: ['facegen/src/*.ts'],
+        rules: {
+            // '@typescript-eslint/no-unused-vars': 'off',
+            '@typescript-eslint/explicit-function-return-type': 'warn',
+            '@typescript-eslint/typedef': [
+                'warn',
+                {
+                    parameter: true,
+                    propertyDeclaration: true,
+                    memberVariableDeclaration: true,
+                    variableDeclaration: true,
+                },
+            ],
+        },
+    },
 );
