@@ -264,4 +264,3 @@ class Face {
 Face.run();
 
 // TODO tslint should ask for type tags
-// todo npm script for tsc + open browser

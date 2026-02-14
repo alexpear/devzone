@@ -6,6 +6,7 @@
     "scripts": {
         "start": "tsx blueskybot/src/main.ts",
         "test": "npm run lint && npm run prettier && npm run typecheck && tsx --test blueskybot/src/*.test.ts",
+        "facegen": "npm test && open facegen/face.html",
         "typecheck": "tsc --noEmit",
         "preview": "tsx blueskybot/src/preview.ts",
         "preview:random": "tsx blueskybot/src/preview.ts --random",
