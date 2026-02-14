@@ -1,5 +1,6 @@
 // Browser-compatible subset of devzone/util.js
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 class Util {
     static exists (x: unknown): boolean {
         return x !== undefined &&
