@@ -36,13 +36,13 @@ class Face {
     constructor () {
         this.randomize();
 
-        (window as any).face = this;
+        (window as unknown).face = this;
     }
 
     randomize (): void {
         const PARAM_RANGES = this.paramRanges();
 
-        for (let shapeType in PARAM_RANGES) {
+        for (const shapeType in PARAM_RANGES) {
             const shapeList: string[] = Object.keys(PARAM_RANGES[shapeType]);
 
             const shape: string = Util.randomOf(shapeList);
@@ -52,7 +52,7 @@ class Face {
 
             const paramsObj: object = PARAM_RANGES[shapeType][shape];
 
-            for (let param in paramsObj) {
+            for (const param in paramsObj) {
                 const range: number[] = [
                     paramsObj[param][0],
                     paramsObj[param][1],

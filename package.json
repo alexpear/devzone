@@ -5,10 +5,14 @@
   "type": "module",
   "scripts": {
     "start": "tsx blueskybot/src/main.ts",
+    "test": "npm run lint && npm run prettier && npm run typecheck && tsx --test blueskybot/src/*.test.ts",
     "typecheck": "tsc --noEmit",
     "preview": "tsx blueskybot/src/preview.ts",
     "preview:random": "tsx blueskybot/src/preview.ts --random",
-    "test": "tsc --noEmit && tsx --test blueskybot/src/*.test.ts"
+    "lint": "eslint **/*.ts",
+    "lint:fix": "eslint --fix **/*.ts",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -26,7 +30,11 @@
   },
   "devDependencies": {
     "@types/node": "^25.2.3",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.55.0"
   }
 }

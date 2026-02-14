@@ -4,7 +4,6 @@ const _ = require('lodash');
 const commaNumber = require('comma-number');
 const moment = require('moment');
 
-// TODO: import Util funcs from util.js in the warband repo
 class Util {
     static colored (str, colorName) {
         return (Util.COLORS[colorName] || Util.COLORS.purple) +
