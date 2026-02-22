@@ -6,7 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **devzone** is a testbed repo for prototyping software projects. It is a Node.js package (v0.1.0) licensed under CC0-1.0.
 
-This repo contains a Bluesky bot that posts a daily "On This Day in History" event. It runs as a one-shot TypeScript script triggered by GitHub Actions cron at 8:00 AM UTC (midnight Pacific). Data comes from a hand-curated CSV (`blueskybot/data/events.csv`). The entry point is `blueskybot/src/main.ts`.
+This repo contains multiple projects:
+
+- **blueskybot/** — A Bluesky bot that posts a daily "On This Day in History" event. Runs as a one-shot TypeScript script triggered by GitHub Actions cron at 8:00 AM UTC. Entry point: `blueskybot/src/main.ts`.
+- **mapgame/** — A mobile web game showing the player's GPS position on a Leaflet/OSM map with objectives at every 0.01° grid intersection. Vanilla TypeScript compiled with `tsc` to `dist/`, no bundler. Open `mapgame/index.html` in a browser to play.
 
 ## Commands
 
@@ -15,6 +18,7 @@ This repo contains a Bluesky bot that posts a daily "On This Day in History" eve
 - `npm run preview:random` — Preview a random day's post
 - `npm run typecheck` — Type-check with `tsc --noEmit`
 - `npm test` — Type-check + run unit tests via `node:test`
+- `tsc -p mapgame/tsconfig.json` — Compile mapgame TypeScript to `mapgame/dist/`
 
 ## Architecture
 
@@ -28,6 +32,13 @@ This repo contains a Bluesky bot that posts a daily "On This Day in History" eve
 - `blueskybot/src/post.test.ts` — Unit tests for post formatting and truncation
 - `blueskybot/data/events.csv` — 366 entries, format: `date,event,year` (year is optional). Quoted fields with commas are supported.
 - `.github/workflows/post.yml` — Daily cron at 8:00 AM UTC + manual trigger
+
+### mapgame
+
+- `mapgame/index.html` — Entry point, loads Leaflet via CDN + `dist/main.js`
+- `mapgame/src/main.ts` — Map init, GPS tracking, objective grid rendering, localStorage stubs
+- `mapgame/tsconfig.json` — Compiles `src/` to `dist/`, `types: []` to avoid pulling in `@types/node`
+- Leaflet is a global (`declare const L: any`), not an import
 
 ## Key Details
 
