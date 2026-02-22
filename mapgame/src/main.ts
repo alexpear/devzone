@@ -14,9 +14,12 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // --- Player marker ---
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let playerMarker: Record<string, any> | null = null;
+let playerMarker: Record<string, any> | undefined = undefined;
+
+// todo rename or comment explaining what this does.
 let firstFix = true;
 
+// todo clearer func name
 function onPosition(pos: GeolocationPosition): void {
     const { latitude, longitude } = pos.coords;
     if (playerMarker) {
@@ -40,6 +43,7 @@ function onPositionError(err: GeolocationPositionError): void {
     console.error('Geolocation error:', err.message);
 }
 
+// TODO is the ordering of funcs here good? Should i wrap in a init()?
 if (navigator.geolocation) {
     navigator.geolocation.watchPosition(onPosition, onPositionError, {
         enableHighAccuracy: true,
@@ -72,6 +76,7 @@ function updateObjectives(): void {
     const visibleKeys = new Set<string>();
 
     for (let lat = latMin; lat <= latMax + GRID_STEP / 2; lat += GRID_STEP) {
+        // todo inconsistent whitespace, does prettier force this?
         for (
             let lng = lngMin;
             lng <= lngMax + GRID_STEP / 2;
@@ -85,7 +90,7 @@ function updateObjectives(): void {
 
             if (!renderedObjectives.has(key)) {
                 const marker = L.circleMarker([rlat, rlng], {
-                    radius: 6,
+                    radius: 6, // TODO this should change with zoom level
                     color: '#000',
                     fillColor: '#000',
                     fillOpacity: 0.8,
@@ -96,6 +101,7 @@ function updateObjectives(): void {
         }
     }
 
+    // todo efficient alg? Why remove them now & in this way?
     // Remove markers outside viewport
     for (const [key, marker] of renderedObjectives) {
         if (!visibleKeys.has(key)) {
@@ -115,11 +121,14 @@ function saveState(state: object): void {
     localStorage.setItem('mapgame', JSON.stringify(state));
 }
 
-function loadState(): object | null {
+function loadState(): object | undefined {
     const raw = localStorage.getItem('mapgame');
     if (raw) {
         return JSON.parse(raw);
     }
-    return null;
+    return undefined;
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */
+
+// TODO prettierrc should ignore files in .claude/
+// TODO unit tests about gamestate, saving & loading to storage format, player actions, visiting a place twice in same day.
