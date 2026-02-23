@@ -4,8 +4,8 @@
     "description": "Bluesky bot that posts a daily 'On This Day in History' event",
     "type": "module",
     "scripts": {
-        "start": "tsx blueskybot/src/main.ts",
         "test": "npm run lint && npm run prettier && npm run typecheck && tsx --test blueskybot/src/*.test.ts",
+        "mapgame": "npm test && open mapgame/index.html",
         "facegen": "npm test && open facegen/face.html",
         "typecheck": "tsc --noEmit",
         "preview": "tsx blueskybot/src/preview.ts",
