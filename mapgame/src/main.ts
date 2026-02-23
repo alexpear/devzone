@@ -16,8 +16,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let playerMarker: Record<string, any> | undefined = undefined;
 
-// todo rename or comment explaining what this does.
-let firstFix = true;
+let locationKnown = false;
 
 // todo clearer func name
 function onPosition(pos: GeolocationPosition): void {
@@ -33,9 +32,9 @@ function onPosition(pos: GeolocationPosition): void {
             weight: 2,
         }).addTo(map);
     }
-    if (firstFix) {
+    if (! locationKnown) {
         map.setView([latitude, longitude], 16);
-        firstFix = false;
+        locationKnown = true;
     }
 }
 
