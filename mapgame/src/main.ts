@@ -32,7 +32,7 @@ function onPosition(pos: GeolocationPosition): void {
             weight: 2,
         }).addTo(map);
     }
-    if (! locationKnown) {
+    if (!locationKnown) {
         map.setView([latitude, longitude], 16);
         locationKnown = true;
     }
