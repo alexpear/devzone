@@ -59,6 +59,7 @@ function snapToGrid(val: number): number {
     return Math.round(val / GRID_STEP) * GRID_STEP;
 }
 
+// TODO probably make a class Objective
 const MIN_OBJECTIVE_ZOOM = 12;
 
 function objectiveRadius(): number {
@@ -147,6 +148,8 @@ updateObjectives();
 function saveState(state: object): void {
     localStorage.setItem('mapgame', JSON.stringify(state));
 }
+
+// LATER menu option to download a save file. Also option to import a save file (merging it into current state).
 
 function loadState(): object | undefined {
     const raw = localStorage.getItem('mapgame');
