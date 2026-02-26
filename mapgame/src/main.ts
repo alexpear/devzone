@@ -14,7 +14,7 @@ class MapGame {
 
     // TODO display score in html.
     // LATER could make this decay 1 point/day.
-    playerScore = 0;
+    playerScore = Number(localStorage.getItem('playerScore')) || 0;
 
     constructor() {
         // --- Map setup ---
@@ -35,9 +35,6 @@ class MapGame {
         }
 
         this.map.on('moveend', this.updateGoals);
-
-        // LATER load this.playerScore from local storage.
-        // this.load();
 
         this.updateGoals();
     }
@@ -60,7 +57,6 @@ class MapGame {
             this.locationKnown = true;
         }
 
-        // TODO Collect all points from the nearest goal. Update its timestamp.
         this.visit(
             Goal.at(latitude, longitude)
         );
@@ -71,12 +67,25 @@ class MapGame {
     }
 
     visit (goal: Goal): void {
-        this.playerScore += goal.pointsAvailable();
+        const points = goal.pointsAvailable();
+        this.playerScore += points;
+
+        if (points > 0) {
+            localStorage.setItem('playerScore', this.playerScore.toString());
+        }
+
         goal.visit();
     }
 
     snapToGrid(val: number): number {
         return Math.round(val / GRID_STEP) * GRID_STEP;
+    }
+
+    static keyFormat(lat: number, lng: number): string {
+        // Round to avoid floating point drift
+        const rlat = Math.round(lat * 100) / 100;
+        const rlng = Math.round(lng * 100) / 100;
+        return rlat + ',' + rlng;
     }
 
     goalRadius(): number {
@@ -118,20 +127,16 @@ class MapGame {
             lat <= latMax + GRID_STEP / 2;
             lat += GRID_STEP
         ) {
-            // LATER inconsistent whitespace, prettier forces the above for() onto 1 line
             for (
                 let lng = lngMin;
                 lng <= lngMax + GRID_STEP / 2;
                 lng += GRID_STEP
             ) {
-                // Round to avoid floating point drift
-                const rlat = Math.round(lat * 100) / 100;
-                const rlng = Math.round(lng * 100) / 100;
-                const key = rlat + ',' + rlng;
+                const key = MapGame.keyFormat(lat, lng)
                 visibleKeys.add(key);
 
                 if (!this.renderedGoals.has(key)) {
-                    const marker = L.circleMarker([rlat, rlng], {
+                    const marker = L.circleMarker([this.snapToGrid(lat), this.snapToGrid(lng)], {
                         radius,
                         color: '#000',
                         fillColor: '#000',
@@ -204,7 +209,7 @@ class Goal {
     }
 
     static at(lat: number, long: number): Goal {
-        
+        // todo caching question again
     }
 }
 
