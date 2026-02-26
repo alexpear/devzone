@@ -12,6 +12,10 @@ class MapGame {
     renderedGoals: Map<string, Record<string, any>> = new Map();
     locationKnown = false;
 
+    // TODO display score in html.
+    // LATER could make this decay 1 point/day.
+    playerScore = 0;
+
     constructor() {
         // --- Map setup ---
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -31,6 +35,10 @@ class MapGame {
         }
 
         this.map.on('moveend', this.updateGoals);
+
+        // LATER load this.playerScore from local storage.
+        // this.load();
+
         this.updateGoals();
     }
 
@@ -51,11 +59,20 @@ class MapGame {
             this.map.setView([latitude, longitude], 16);
             this.locationKnown = true;
         }
+
         // TODO Collect all points from the nearest goal. Update its timestamp.
+        this.visit(
+            Goal.at(latitude, longitude)
+        );
     }
 
     gpsError(err: GeolocationPositionError): void {
         console.error('Geolocation error:', err.message);
+    }
+
+    visit (goal: Goal): void {
+        this.playerScore += goal.pointsAvailable();
+        goal.visit();
     }
 
     snapToGrid(val: number): number {
@@ -178,9 +195,16 @@ class Goal {
     }
 
     pointsAvailable(): number {
-        // todo
+        return Math.min(999, this.daysSinceVisited());
+    }
 
-        return 999;
+    visit(): void {
+        // todo write to local storage
+        // todo should i cache timestamps in Goal instances, and only write to local storage periodically?
+    }
+
+    static at(lat: number, long: number): Goal {
+        
     }
 }
 
