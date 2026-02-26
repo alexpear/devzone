@@ -18,8 +18,7 @@ let playerMarker: Record<string, any> | undefined = undefined;
 
 let locationKnown = false;
 
-// todo clearer func name
-function onPosition(pos: GeolocationPosition): void {
+function updateAfterGPS(pos: GeolocationPosition): void {
     const { latitude, longitude } = pos.coords;
     if (playerMarker) {
         playerMarker.setLatLng([latitude, longitude]);
@@ -39,13 +38,13 @@ function onPosition(pos: GeolocationPosition): void {
     // TODO Collect all points from the nearest objective. Update its timestamp.
 }
 
-function onPositionError(err: GeolocationPositionError): void {
+function gpsError(err: GeolocationPositionError): void {
     console.error('Geolocation error:', err.message);
 }
 
 // TODO is the ordering of funcs here good? Should i wrap in a init()?
 if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(onPosition, onPositionError, {
+    navigator.geolocation.watchPosition(updateAfterGPS, gpsError, {
         enableHighAccuracy: true,
     });
 }
@@ -96,7 +95,7 @@ function updateObjectives(): void {
     const visibleKeys = new Set<string>();
 
     for (let lat = latMin; lat <= latMax + GRID_STEP / 2; lat += GRID_STEP) {
-        // todo inconsistent whitespace, prettier forces the above for() onto 1 line 
+        // LATER inconsistent whitespace, prettier forces the above for() onto 1 line
         for (
             let lng = lngMin;
             lng <= lngMax + GRID_STEP / 2;
@@ -126,8 +125,7 @@ function updateObjectives(): void {
         }
     }
 
-    // todo efficient alg? Why remove them now & in this way?
-    // Remove markers outside viewport
+    // Remove any existing circle objects that are now outside the viewport
     for (const [key, marker] of renderedObjectives) {
         if (!visibleKeys.has(key)) {
             map.removeLayer(marker);
@@ -140,7 +138,7 @@ map.on('moveend', updateObjectives);
 updateObjectives();
 // TODO once again, it feels weird to have this func call be naked out here.
 
-// LATER button to scroll & zoom to player location. 
+// LATER button to scroll & zoom to player location.
 // LATER How To Play '?' button
 
 // --- localStorage stubs (for future game mechanics) ---
@@ -159,5 +157,4 @@ function loadState(): object | undefined {
 }
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
-// TODO prettierrc should ignore files in .claude/
 // TODO unit tests about gamestate, saving & loading to storage format, player actions, visiting a place twice in same day.
