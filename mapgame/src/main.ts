@@ -36,6 +36,7 @@ function onPosition(pos: GeolocationPosition): void {
         map.setView([latitude, longitude], 16);
         locationKnown = true;
     }
+    // TODO Collect all points from the nearest objective. Update its timestamp.
 }
 
 function onPositionError(err: GeolocationPositionError): void {
@@ -95,6 +96,9 @@ function updateObjectives(): void {
                     fillOpacity: 0.8,
                     weight: 1,
                 }).addTo(map);
+
+                // TODO also display the number of available points for this objective
+
                 renderedObjectives.set(key, marker);
             }
         }
@@ -112,6 +116,10 @@ function updateObjectives(): void {
 
 map.on('moveend', updateObjectives);
 updateObjectives();
+// TODO once again, it feels weird to have this func call be naked out here.
+
+// LATER button to scroll & zoom to player location. 
+// LATER How To Play '?' button
 
 // --- localStorage stubs (for future game mechanics) ---
 
