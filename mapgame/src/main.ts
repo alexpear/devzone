@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const L: any;
 const GRID_STEP = 0.01;
-const MIN_OBJECTIVE_ZOOM = 10;
+const GOALS_MIN_ZOOM = 10;
 
 class MapGame {
     map = L.map('map').setView([37.77, -122.42], 15); // Default: San Francisco
@@ -9,7 +9,7 @@ class MapGame {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     playerMarker: Record<string, any> | undefined = undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    renderedObjectives: Map<string, Record<string, any>> = new Map();
+    renderedGoals: Map<string, Record<string, any>> = new Map();
     locationKnown = false;
 
     constructor() {
@@ -30,8 +30,8 @@ class MapGame {
             );
         }
 
-        this.map.on('moveend', this.updateObjectives);
-        this.updateObjectives();
+        this.map.on('moveend', this.updateGoals);
+        this.updateGoals();
     }
 
     updateAfterGPS(pos: GeolocationPosition): void {
@@ -51,7 +51,7 @@ class MapGame {
             this.map.setView([latitude, longitude], 16);
             this.locationKnown = true;
         }
-        // TODO Collect all points from the nearest objective. Update its timestamp.
+        // TODO Collect all points from the nearest goal. Update its timestamp.
     }
 
     gpsError(err: GeolocationPositionError): void {
@@ -62,26 +62,25 @@ class MapGame {
         return Math.round(val / GRID_STEP) * GRID_STEP;
     }
 
-    // todo objective -> goal
-    objectiveRadius(): number {
+    goalRadius(): number {
         const zoom = this.map.getZoom();
         // Scale from 2px at zoom 12 to 8px at zoom 18+
         return Math.min(8, Math.max(2, zoom - 12 + 2));
     }
 
-    updateObjectives(): void {
+    updateGoals(): void {
         const zoom = this.map.getZoom();
 
-        // Too zoomed out — remove all objectives and bail
-        if (zoom < MIN_OBJECTIVE_ZOOM) {
-            for (const [key, marker] of this.renderedObjectives) {
+        // Too zoomed out — remove all goals and bail
+        if (zoom < GOALS_MIN_ZOOM) {
+            for (const [key, marker] of this.renderedGoals) {
                 this.map.removeLayer(marker);
-                this.renderedObjectives.delete(key);
+                this.renderedGoals.delete(key);
             }
             return;
         }
 
-        const radius = this.objectiveRadius();
+        const radius = this.goalRadius();
         const bounds = this.map.getBounds();
         const south = bounds.getSouth();
         const north = bounds.getNorth();
@@ -114,7 +113,7 @@ class MapGame {
                 const key = rlat + ',' + rlng;
                 visibleKeys.add(key);
 
-                if (!this.renderedObjectives.has(key)) {
+                if (!this.renderedGoals.has(key)) {
                     const marker = L.circleMarker([rlat, rlng], {
                         radius,
                         color: '#000',
@@ -123,21 +122,21 @@ class MapGame {
                         weight: 1,
                     }).addTo(this.map);
 
-                    // TODO also display the number of available points for this objective
+                    // TODO also display the number of available points for this goal
 
                     // TODO use a Goal object in this func, not just a circleMarker.
-                    this.renderedObjectives.set(key, marker);
+                    this.renderedGoals.set(key, marker);
                 } else {
-                    this.renderedObjectives.get(key).setRadius(radius);
+                    this.renderedGoals.get(key).setRadius(radius);
                 }
             }
         }
 
         // Remove any existing circle objects that are now outside the viewport
-        for (const [key, marker] of this.renderedObjectives) {
+        for (const [key, marker] of this.renderedGoals) {
             if (!visibleKeys.has(key)) {
                 this.map.removeLayer(marker);
-                this.renderedObjectives.delete(key);
+                this.renderedGoals.delete(key);
             }
         }
     }
