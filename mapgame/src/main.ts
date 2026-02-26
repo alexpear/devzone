@@ -60,7 +60,27 @@ function snapToGrid(val: number): number {
     return Math.round(val / GRID_STEP) * GRID_STEP;
 }
 
+const MIN_OBJECTIVE_ZOOM = 12;
+
+function objectiveRadius(): number {
+    const zoom = map.getZoom();
+    // Scale from 2px at zoom 12 to 8px at zoom 18+
+    return Math.min(8, Math.max(2, zoom - 12 + 2));
+}
+
 function updateObjectives(): void {
+    const zoom = map.getZoom();
+
+    // Too zoomed out — remove all objectives and bail
+    if (zoom < MIN_OBJECTIVE_ZOOM) {
+        for (const [key, marker] of renderedObjectives) {
+            map.removeLayer(marker);
+            renderedObjectives.delete(key);
+        }
+        return;
+    }
+
+    const radius = objectiveRadius();
     const bounds = map.getBounds();
     const south = bounds.getSouth();
     const north = bounds.getNorth();
@@ -76,7 +96,7 @@ function updateObjectives(): void {
     const visibleKeys = new Set<string>();
 
     for (let lat = latMin; lat <= latMax + GRID_STEP / 2; lat += GRID_STEP) {
-        // todo inconsistent whitespace, does prettier force this?
+        // todo inconsistent whitespace, prettier forces the above for() onto 1 line 
         for (
             let lng = lngMin;
             lng <= lngMax + GRID_STEP / 2;
@@ -90,7 +110,7 @@ function updateObjectives(): void {
 
             if (!renderedObjectives.has(key)) {
                 const marker = L.circleMarker([rlat, rlng], {
-                    radius: 6, // TODO this should change with zoom level
+                    radius,
                     color: '#000',
                     fillColor: '#000',
                     fillOpacity: 0.8,
@@ -100,6 +120,8 @@ function updateObjectives(): void {
                 // TODO also display the number of available points for this objective
 
                 renderedObjectives.set(key, marker);
+            } else {
+                renderedObjectives.get(key).setRadius(radius);
             }
         }
     }
