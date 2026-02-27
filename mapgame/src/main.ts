@@ -68,7 +68,7 @@ class MapGame {
     }
 
     // TODO params might be neater as just coordKey: string
-    visit (lat: number, long: number): void {
+    visit(lat: number, long: number): void {
         const goal = this.goalAt(lat, long);
         const points = goal.pointsAvailable();
 
@@ -130,7 +130,6 @@ class MapGame {
 
         // Track which keys are in the current viewport
         const visibleKeys = new Set<string>();
-        // const today = new Date();
 
         for (
             let lat = latMin;
@@ -142,21 +141,23 @@ class MapGame {
                 lng <= lngMax + GRID_STEP / 2;
                 lng += GRID_STEP
             ) {
-                const key = MapGame.keyFormat(lat, lng)
+                const key = MapGame.keyFormat(lat, lng);
                 visibleKeys.add(key);
 
-                const goal = this.goalAt(lat, lng);
+                // TODO display the number of available points for this goal
+                // const goal = this.goalAt(lat, lng);
 
                 if (!this.renderedGoals.has(key)) {
-                    const marker = L.circleMarker([this.snapToGrid(lat), this.snapToGrid(lng)], {
-                        radius,
-                        color: '#000',
-                        fillColor: '#000',
-                        fillOpacity: 0.8,
-                        weight: 1,
-                    }).addTo(this.map);
-
-                    // TODO also display the number of available points for this goal
+                    const marker = L.circleMarker(
+                        [this.snapToGrid(lat), this.snapToGrid(lng)],
+                        {
+                            radius,
+                            color: '#000',
+                            fillColor: '#000',
+                            fillOpacity: 0.8,
+                            weight: 1,
+                        },
+                    ).addTo(this.map);
 
                     this.renderedGoals.set(key, marker);
                 } else {
@@ -222,7 +223,7 @@ class MapGame {
 // One of many places that you get points for visiting.
 class Goal {
     // lat: number;
-    // long: number; 
+    // long: number;
 
     // TODO standardize long/lng
 
@@ -233,7 +234,7 @@ class Goal {
     //     this.long = long;
     // }
 
-    constructor (lastVisited?: Date) {
+    constructor(lastVisited?: Date) {
         // Default to 1970 for never-visited places.
         this.lastVisited = lastVisited || new Date(0);
     }
