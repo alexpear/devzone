@@ -67,17 +67,15 @@ class MapGame {
         console.error('Geolocation error:', err.message);
     }
 
+    // TODO params might be neater as just coordKey: string
     visit (lat: number, long: number): void {
-        const coordKey = MapGame.keyFormat(lat, long);
-        // check if we already have info about this place in coords2dates
-        const rememberedDate = this.coords2dates[coordKey];
-        const goal = new Goal(rememberedDate); // todo goalat functionize
-    
+        const goal = this.goalAt(lat, long);
         const points = goal.pointsAvailable();
+
         if (points > 0) {
             this.playerScore += points;
             goal.visit();
-            this.coords2dates[coordKey] = new Date();
+            this.coords2dates[MapGame.keyFormat(lat, long)] = new Date();
 
             // LATER could call this less often, or on a cooldown timer, or check GPS position less often.
             this.save();
