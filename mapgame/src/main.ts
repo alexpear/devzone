@@ -237,12 +237,12 @@ class Goal {
     }
 
     daysSinceVisited(): number {
-        // todo
-        return Infinity;
+        const ms = Date.now() - this.lastVisited.getTime();
+        return ms / (1000 * 60 * 60 * 24);
     }
 
     pointsAvailable(): number {
-        return Math.min(999, this.daysSinceVisited());
+        return Math.min(999, Math.round(this.daysSinceVisited()));
     }
 
     visit(): void {
