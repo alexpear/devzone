@@ -13,8 +13,9 @@ class MapGame {
     locationKnown = false;
 
     // TODO display score in html.
-    // LATER could make this decay 1 point/day.
-    playerScore = Number(localStorage.getItem('playerScore')) || 0;
+    // LATER could make this decay 1 point/day, eg by storing a started: Date and subtracting points from score equal to today - started.
+    playerScore = 0;
+    coords2dates: Map<string, Date> = new Map();
 
     constructor() {
         // --- Map setup ---
@@ -23,6 +24,8 @@ class MapGame {
             attribution:
                 '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         }).addTo(this.map);
+
+        this.load();
 
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(
@@ -57,24 +60,33 @@ class MapGame {
             this.locationKnown = true;
         }
 
-        this.visit(
-            Goal.at(latitude, longitude)
-        );
+        this.visit(latitude, longitude);
     }
 
     gpsError(err: GeolocationPositionError): void {
         console.error('Geolocation error:', err.message);
     }
 
-    visit (goal: Goal): void {
+    visit (lat: number, long: number): void {
+        const coordKey = MapGame.keyFormat(lat, long);
+        // check if we already have info about this place in coords2dates
+        const rememberedDate = this.coords2dates[coordKey];
+        const goal = new Goal(rememberedDate);
+
+        if (rememberedDate) {
+
+        }
+        
+        // todo
+
         const points = goal.pointsAvailable();
         this.playerScore += points;
+        goal.visit();
 
         if (points > 0) {
-            localStorage.setItem('playerScore', this.playerScore.toString());
+            // LATER could call this less often, or on a cooldown timer, or check GPS position less often.
+            this.save();
         }
-
-        goal.visit();
     }
 
     snapToGrid(val: number): number {
@@ -86,6 +98,19 @@ class MapGame {
         const rlat = Math.round(lat * 100) / 100;
         const rlng = Math.round(lng * 100) / 100;
         return rlat + ',' + rlng;
+    }
+
+    goalAt(lat: number, long: number): Goal {
+        const coordKey = MapGame.keyFormat(lat, long);
+        // check if we already have info about this place in coords2dates
+        const remembered = this.coords2dates[coordKey];
+        if (remembered) {
+            return remembered;
+        }
+
+        // const goal = new Goal();
+        // this.coords2dates[coordKey] = goal;
+        // return goal;
     }
 
     goalRadius(): number {
@@ -135,6 +160,8 @@ class MapGame {
                 const key = MapGame.keyFormat(lat, lng)
                 visibleKeys.add(key);
 
+                // todo goalAt()... 
+
                 if (!this.renderedGoals.has(key)) {
                     const marker = L.circleMarker([this.snapToGrid(lat), this.snapToGrid(lng)], {
                         radius,
@@ -166,21 +193,41 @@ class MapGame {
     // LATER button to scroll & zoom to player location.
     // LATER How To Play '?' button
 
+    stateString(): string {
+        const state = {
+            coords2dates: this.coords2dates,
+            playerScore: this.playerScore,
+        };
+
+        return JSON.stringify(state);
+    }
+
     // --- localStorage stubs (for future game mechanics) ---
 
-    saveState(state: object): void {
-        localStorage.setItem('mapgame', JSON.stringify(state));
+    // Save & load are both the whole gamestate, ie playerScore AND coords2dates.
+    save(): void {
+        localStorage.setItem('mapGame', this.stateString());
     }
 
     // LATER menu option to download a save file. Also option to import a save file (merging it into current state).
 
-    loadState(): object | undefined {
-        const raw = localStorage.getItem('mapgame');
-        if (raw) {
-            return JSON.parse(raw);
+    // Load the saved gamestate from local storage.
+    load(): void {
+        const raw = localStorage.getItem('mapGame');
+        if (!raw) {
+            return;
         }
-        return undefined;
+
+        const worldState = JSON.parse(raw);
+        if (worldState.playerScore) {
+            this.playerScore = Number(worldState.playerScore);
+        }
+        if (worldState.coords2dates) {
+            this.coords2dates = worldState.coords2dates;
+        }
     }
+
+    // NOTE Players that visit a vast quantity of places will have large gamestates. Hopefully this only affects performance at inhuman levels.
 
     static run(): void {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -188,11 +235,24 @@ class MapGame {
     }
 }
 
-// One of many locations that you get points for visiting.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// One of many places that you get points for visiting.
 class Goal {
-    lat: number;
-    long: number;
+    // lat: number;
+    // long: number; 
+
+    // TODO standardize long/lng
+
+    lastVisited: Date;
+
+    // constructor(lat: number, long: number) {
+    //     this.lat = lat;
+    //     this.long = long;
+    // }
+
+    constructor (lastVisited?: Date) {
+        // TODO init to epoch start or similar.
+        this.lastVisited = lastVisited || Date.epoch;
+    }
 
     daysSinceVisited(): number {
         // todo
@@ -204,12 +264,8 @@ class Goal {
     }
 
     visit(): void {
-        // todo write to local storage
-        // todo should i cache timestamps in Goal instances, and only write to local storage periodically?
-    }
-
-    static at(lat: number, long: number): Goal {
-        // todo caching question again
+        this.lastVisited = new Date();
+        // LATER could check if storing timestamps with less precision (eg just '20260226') is faster.
     }
 }
 
