@@ -12,9 +12,9 @@ class MapGame {
     renderedGoals: Map<string, Record<string, any>> = new Map();
     locationKnown = false;
 
-    // TODO display score in html.
     // LATER could make this decay 1 point/day, eg by storing a started: Date and subtracting points from score equal to today - started.
     playerScore = 0;
+    scoreEl = document.getElementById('score') as HTMLElement;
     coords2dates: Map<string, Date> = new Map();
 
     constructor() {
@@ -26,6 +26,7 @@ class MapGame {
         }).addTo(this.map);
 
         this.load();
+        this.updateScoreDisplay();
 
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(
@@ -74,6 +75,7 @@ class MapGame {
 
         if (points > 0) {
             this.playerScore += points;
+            this.updateScoreDisplay();
             goal.visit();
             this.coords2dates[MapGame.keyFormat(lat, long)] = new Date();
 
@@ -91,6 +93,11 @@ class MapGame {
         const rlat = Math.round(lat * 100) / 100;
         const rlng = Math.round(lng * 100) / 100;
         return rlat + ',' + rlng;
+    }
+
+    updateScoreDisplay(): void {
+        this.scoreEl.textContent =
+            'Score: ' + this.playerScore.toLocaleString();
     }
 
     goalAt(lat: number, long: number): Goal {
