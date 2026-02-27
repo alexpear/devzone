@@ -88,11 +88,11 @@ class MapGame {
         return Math.round(val / GRID_STEP) * GRID_STEP;
     }
 
-    static keyFormat(lat: number, lng: number): string {
+    static keyFormat(lat: number, long: number): string {
         // Round to avoid floating point drift
         const rlat = Math.round(lat * 100) / 100;
-        const rlng = Math.round(lng * 100) / 100;
-        return rlat + ',' + rlng;
+        const rlong = Math.round(long * 100) / 100;
+        return rlat + ',' + rlong;
     }
 
     updateScoreDisplay(): void {
@@ -132,8 +132,8 @@ class MapGame {
 
         const latMin = this.snapToGrid(south);
         const latMax = this.snapToGrid(north);
-        const lngMin = this.snapToGrid(west);
-        const lngMax = this.snapToGrid(east);
+        const longMin = this.snapToGrid(west);
+        const longMax = this.snapToGrid(east);
 
         // Track which keys are in the current viewport
         const visibleKeys = new Set<string>();
@@ -144,19 +144,19 @@ class MapGame {
             lat += GRID_STEP
         ) {
             for (
-                let lng = lngMin;
-                lng <= lngMax + GRID_STEP / 2;
-                lng += GRID_STEP
+                let long = longMin;
+                long <= longMax + GRID_STEP / 2;
+                long += GRID_STEP
             ) {
-                const key = MapGame.keyFormat(lat, lng);
+                const key = MapGame.keyFormat(lat, long);
                 visibleKeys.add(key);
 
                 // TODO display the number of available points for this goal
-                // const goal = this.goalAt(lat, lng);
+                // const goal = this.goalAt(lat, long);
 
                 if (!this.renderedGoals.has(key)) {
                     const marker = L.circleMarker(
-                        [this.snapToGrid(lat), this.snapToGrid(lng)],
+                        [this.snapToGrid(lat), this.snapToGrid(long)],
                         {
                             radius,
                             color: '#000',
@@ -229,17 +229,7 @@ class MapGame {
 
 // One of many places that you get points for visiting.
 class Goal {
-    // lat: number;
-    // long: number;
-
-    // TODO standardize long/lng
-
     lastVisited: Date;
-
-    // constructor(lat: number, long: number) {
-    //     this.lat = lat;
-    //     this.long = long;
-    // }
 
     constructor(lastVisited?: Date) {
         // Default to 1970 for never-visited places.
