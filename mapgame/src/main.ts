@@ -71,19 +71,14 @@ class MapGame {
         const coordKey = MapGame.keyFormat(lat, long);
         // check if we already have info about this place in coords2dates
         const rememberedDate = this.coords2dates[coordKey];
-        const goal = new Goal(rememberedDate);
-
-        if (rememberedDate) {
-
-        }
-        
-        // todo
-
+        const goal = new Goal(rememberedDate); // todo goalat functionize
+    
         const points = goal.pointsAvailable();
-        this.playerScore += points;
-        goal.visit();
-
         if (points > 0) {
+            this.playerScore += points;
+            goal.visit();
+            this.coords2dates[coordKey] = new Date();
+
             // LATER could call this less often, or on a cooldown timer, or check GPS position less often.
             this.save();
         }
@@ -102,15 +97,7 @@ class MapGame {
 
     goalAt(lat: number, long: number): Goal {
         const coordKey = MapGame.keyFormat(lat, long);
-        // check if we already have info about this place in coords2dates
-        const remembered = this.coords2dates[coordKey];
-        if (remembered) {
-            return remembered;
-        }
-
-        // const goal = new Goal();
-        // this.coords2dates[coordKey] = goal;
-        // return goal;
+        return new Goal(this.coords2dates[coordKey]);
     }
 
     goalRadius(): number {
@@ -160,7 +147,7 @@ class MapGame {
                 const key = MapGame.keyFormat(lat, lng)
                 visibleKeys.add(key);
 
-                // todo goalAt()... 
+                const goal = this.goalAt(lat, lng);
 
                 if (!this.renderedGoals.has(key)) {
                     const marker = L.circleMarker([this.snapToGrid(lat), this.snapToGrid(lng)], {
@@ -173,7 +160,6 @@ class MapGame {
 
                     // TODO also display the number of available points for this goal
 
-                    // TODO use a Goal object in this func, not just a circleMarker.
                     this.renderedGoals.set(key, marker);
                 } else {
                     this.renderedGoals.get(key).setRadius(radius);
@@ -250,8 +236,8 @@ class Goal {
     // }
 
     constructor (lastVisited?: Date) {
-        // TODO init to epoch start or similar.
-        this.lastVisited = lastVisited || Date.epoch;
+        // Default to 1970 for never-visited places.
+        this.lastVisited = lastVisited || new Date(0);
     }
 
     daysSinceVisited(): number {
