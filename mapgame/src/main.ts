@@ -153,9 +153,10 @@ class MapGame {
                 visibleKeys.add(key);
 
                 const goal = this.goalAt(lat, long);
-                const label = goal.label();
+                const text = goal.text();
+                const existingLabel = this.renderedGoals.get(key);
 
-                if (!this.renderedGoals.has(key)) {
+                if (existingLabel) {
                     const icon = L.divIcon({
                         className: 'goal-label',
                         html:
@@ -163,7 +164,7 @@ class MapGame {
                             '<span style="font-size:' +
                             fontSize +
                             'px">' +
-                            label +
+                            text +
                             '</span>',
                         iconSize: [40, 20],
                         iconAnchor: [20, 10],
@@ -175,19 +176,18 @@ class MapGame {
 
                     this.renderedGoals.set(key, marker);
                 } else {
-                    const existing = this.renderedGoals.get(key);
                     const icon = L.divIcon({
                         className: 'goal-label',
                         html:
                             '<span style="font-size:' +
                             fontSize +
                             'px">' +
-                            label +
+                            text +
                             '</span>',
                         iconSize: [40, 20],
                         iconAnchor: [20, 10],
                     });
-                    existing.setIcon(icon);
+                    existingLabel.setIcon(icon);
                 }
             }
         }
@@ -264,7 +264,7 @@ class Goal {
         return Math.min(999, Math.round(this.daysSinceVisited()));
     }
 
-    label(): string {
+    text(): string {
         return String(this.pointsAvailable());
     }
 
