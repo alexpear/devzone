@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const L: any;
 const GRID_STEP = 0.01;
-const GOALS_MIN_ZOOM = 10;
+const GOALS_MIN_ZOOM = 11;
 
 class MapGame {
     map = L.map('map').setView([37.77, -122.42], 15); // Default: San Francisco
@@ -116,7 +116,7 @@ class MapGame {
         // TODO Uncaught TypeError: can't access property "getZoom", this.map is undefined
 
         // Too zoomed out — remove all goals and bail
-        if (zoom < GOALS_MIN_ZOOM) {
+        if (zoom <= GOALS_MIN_ZOOM) {
             for (const [key, marker] of this.renderedGoals) {
                 this.map.removeLayer(marker);
                 this.renderedGoals.delete(key);
