@@ -156,7 +156,7 @@ class MapGame {
                 const text = goal.text();
                 const existingLabel = this.renderedGoals.get(key);
 
-                if (existingLabel) {
+                if (!existingLabel) {
                     const icon = L.divIcon({
                         className: 'goal-label',
                         html:
