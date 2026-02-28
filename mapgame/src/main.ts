@@ -40,7 +40,7 @@ class MapGame {
 
         this.map.on('moveend', () => this.updateGoalVisuals());
 
-        this.updateGoalVisuals();
+        this.updateScreen();
     }
 
     updateAfterGPS(pos: GeolocationPosition): void {
@@ -68,20 +68,26 @@ class MapGame {
         console.error('Geolocation error:', err.message);
     }
 
-    // TODO params might be neater as just coordKey: string
+    // LATER params might be neater as just coordKey: string
     visit(lat: number, long: number): void {
         const goal = this.goalAt(lat, long);
         const points = goal.pointsAvailable();
 
         if (points > 0) {
             this.playerScore += points;
-            this.updateScoreDisplay();
             goal.visit();
             this.coords2dates.set(MapGame.keyFormat(lat, long), new Date());
 
             // LATER could call this less often, or on a cooldown timer, or check GPS position less often.
             this.save();
+
+            this.updateScreen();
         }
+    }
+
+    updateScreen() {
+        this.updateGoalVisuals();
+        this.updateScoreDisplay();
     }
 
     snapToGrid(val: number): number {
@@ -113,7 +119,6 @@ class MapGame {
 
     updateGoalVisuals(): void {
         const zoom = this.map.getZoom();
-        // TODO Uncaught TypeError: can't access property "getZoom", this.map is undefined
 
         // Too zoomed out — remove all goals and bail
         if (zoom <= GOALS_MIN_ZOOM) {
