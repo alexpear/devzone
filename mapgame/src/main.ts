@@ -15,7 +15,9 @@ class MapGame {
     // LATER could make this decay 1 point/day, eg by storing a started: Date and subtracting points from score equal to today - started.
     playerScore = 0;
     scoreEl = document.getElementById('score') as HTMLElement;
-    coords2dates: Map<string, Date> = new Map();
+
+    // Dict storing Dates in string format.
+    coords2dates: Record<string, string> = {};
 
     constructor() {
         // --- Map setup ---
@@ -76,7 +78,8 @@ class MapGame {
         if (points > 0) {
             this.playerScore += points;
             goal.visit();
-            this.coords2dates.set(MapGame.keyFormat(lat, long), new Date());
+            this.coords2dates[MapGame.keyFormat(lat, long)] =
+                new Date().toISOString();
 
             // LATER could call this less often, or on a cooldown timer, or check GPS position less often.
             this.save();
@@ -108,7 +111,8 @@ class MapGame {
 
     goalAt(lat: number, long: number): Goal {
         const coordKey = MapGame.keyFormat(lat, long);
-        return new Goal(this.coords2dates.get(coordKey));
+        const dateStr = this.coords2dates[coordKey];
+        return new Goal(dateStr ? new Date(dateStr) : undefined);
     }
 
     goalFontSize(): number {
