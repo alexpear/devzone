@@ -11,9 +11,9 @@
         "preview": "tsx blueskybot/src/preview.ts",
         "preview:random": "tsx blueskybot/src/preview.ts --random",
         "lint": "eslint **/*.ts",
-        "lint:fix": "eslint --fix **/*.ts",
+        "lintfix": "eslint --fix **/*.ts",
         "prettier": "prettier --check .",
-        "prettier:fix": "prettier --write ."
+        "prettierfix": "prettier --write ."
     },
     "repository": {
         "type": "git",

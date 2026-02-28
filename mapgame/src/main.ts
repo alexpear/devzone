@@ -30,17 +30,17 @@ class MapGame {
 
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(
-                this.updateAfterGPS,
-                this.gpsError,
+                (pos) => this.updateAfterGPS(pos),
+                (err) => this.gpsError(err),
                 {
                     enableHighAccuracy: true,
                 },
             );
         }
 
-        this.map.on('moveend', this.updateGoals);
+        this.map.on('moveend', () => this.updateGoalVisuals());
 
-        this.updateGoals();
+        this.updateGoalVisuals();
     }
 
     updateAfterGPS(pos: GeolocationPosition): void {
@@ -111,7 +111,7 @@ class MapGame {
         return Math.min(18, Math.max(10, zoom + 0));
     }
 
-    updateGoals(): void {
+    updateGoalVisuals(): void {
         const zoom = this.map.getZoom();
         // TODO Uncaught TypeError: can't access property "getZoom", this.map is undefined
 
