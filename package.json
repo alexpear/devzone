@@ -1,14 +1,12 @@
 {
     "name": "devzone",
     "version": "0.1.0",
-    "description": "Bluesky bot that posts a daily 'On This Day in History' event",
+    "description": "Repo for experimental projects & LLM devtools.",
     "type": "module",
     "scripts": {
-        "test": "npm run lint && npm run prettier && tsc && tsx --test blueskybot/src/*.test.ts",
+        "test": "npm run lint && npm run prettier && tsc --build",
         "mapgame": "npm test && open mapgame/index.html",
         "facegen": "npm test && open facegen/face.html",
-        "preview": "tsx blueskybot/src/preview.ts",
-        "preview:random": "tsx blueskybot/src/preview.ts --random",
         "lint": "eslint **/*.ts",
         "lintfix": "eslint --fix **/*.ts",
         "prettier": "prettier --check .",
