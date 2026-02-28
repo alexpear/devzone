@@ -38,7 +38,8 @@ class Face {
     constructor() {
         this.randomize();
 
-        (window as unknown).face = this;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).face = this;
     }
 
     randomize(): void {

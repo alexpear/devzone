@@ -1,12 +1,4 @@
 {
-    "compilerOptions": {
-        "target": "ES2022",
-        "module": "Node16",
-        "moduleResolution": "Node16",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
-    },
-    "include": ["blueskybot/src", "mapgame/src"]
+    "references": [{ "path": "mapgame" }, { "path": "facegen" }],
+    "files": []
 }
