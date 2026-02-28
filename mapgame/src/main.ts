@@ -77,7 +77,7 @@ class MapGame {
             this.playerScore += points;
             this.updateScoreDisplay();
             goal.visit();
-            this.coords2dates[MapGame.keyFormat(lat, long)] = new Date();
+            this.coords2dates.set(MapGame.keyFormat(lat, long), new Date());
 
             // LATER could call this less often, or on a cooldown timer, or check GPS position less often.
             this.save();
@@ -102,7 +102,7 @@ class MapGame {
 
     goalAt(lat: number, long: number): Goal {
         const coordKey = MapGame.keyFormat(lat, long);
-        return new Goal(this.coords2dates[coordKey]);
+        return new Goal(this.coords2dates.get(coordKey));
     }
 
     goalFontSize(): number {
