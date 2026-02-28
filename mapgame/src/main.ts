@@ -105,14 +105,15 @@ class MapGame {
         return new Goal(this.coords2dates[coordKey]);
     }
 
-    goalRadius(): number {
+    goalFontSize(): number {
         const zoom = this.map.getZoom();
-        // Scale from 2px at zoom 12 to 8px at zoom 18+
-        return Math.min(8, Math.max(2, zoom - 12 + 2));
+        // Scale from 10px at zoom 10 to 18px at zoom 18+
+        return Math.min(18, Math.max(10, zoom + 0));
     }
 
     updateGoals(): void {
         const zoom = this.map.getZoom();
+        // TODO Uncaught TypeError: can't access property "getZoom", this.map is undefined
 
         // Too zoomed out — remove all goals and bail
         if (zoom < GOALS_MIN_ZOOM) {
@@ -123,7 +124,7 @@ class MapGame {
             return;
         }
 
-        const radius = this.goalRadius();
+        const fontSize = this.goalFontSize();
         const bounds = this.map.getBounds();
         const south = bounds.getSouth();
         const north = bounds.getNorth();
@@ -151,29 +152,47 @@ class MapGame {
                 const key = MapGame.keyFormat(lat, long);
                 visibleKeys.add(key);
 
-                // TODO display the number of available points for this goal
-                // const goal = this.goalAt(lat, long);
+                const goal = this.goalAt(lat, long);
+                const label = goal.label();
 
                 if (!this.renderedGoals.has(key)) {
-                    const marker = L.circleMarker(
+                    const icon = L.divIcon({
+                        className: 'goal-label',
+                        html:
+                            // TODO claude's +s are ugly, replace with ``s
+                            '<span style="font-size:' +
+                            fontSize +
+                            'px">' +
+                            label +
+                            '</span>',
+                        iconSize: [40, 20],
+                        iconAnchor: [20, 10],
+                    });
+                    const marker = L.marker(
                         [this.snapToGrid(lat), this.snapToGrid(long)],
-                        {
-                            radius,
-                            color: '#000',
-                            fillColor: '#000',
-                            fillOpacity: 0.8,
-                            weight: 1,
-                        },
+                        { icon, interactive: false },
                     ).addTo(this.map);
 
                     this.renderedGoals.set(key, marker);
                 } else {
-                    this.renderedGoals.get(key).setRadius(radius);
+                    const existing = this.renderedGoals.get(key);
+                    const icon = L.divIcon({
+                        className: 'goal-label',
+                        html:
+                            '<span style="font-size:' +
+                            fontSize +
+                            'px">' +
+                            label +
+                            '</span>',
+                        iconSize: [40, 20],
+                        iconAnchor: [20, 10],
+                    });
+                    existing.setIcon(icon);
                 }
             }
         }
 
-        // Remove any existing circle objects that are now outside the viewport
+        // Remove markers that are now outside the viewport
         for (const [key, marker] of this.renderedGoals) {
             if (!visibleKeys.has(key)) {
                 this.map.removeLayer(marker);
@@ -245,6 +264,10 @@ class Goal {
         return Math.min(999, Math.round(this.daysSinceVisited()));
     }
 
+    label(): string {
+        return String(this.pointsAvailable());
+    }
+
     visit(): void {
         this.lastVisited = new Date();
         // LATER could check if storing timestamps with less precision (eg just '20260226') is faster.
@@ -252,5 +275,6 @@ class Goal {
 }
 
 // TODO unit tests about gamestate, saving & loading to storage format, player actions, visiting a place twice in same day.
+// TODO migrate this dir to other repo for mobile testing
 
 MapGame.run();
