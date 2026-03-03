@@ -1,3 +1,6 @@
+// Mobile game that suggests nearby places to go while exercising, eg biking or jogging.
+
+// L (Leaflet) is loaded as a global by leaflet.js, a script that index.html loads from the unpkg.com CDN.
 declare const L;
 const GRID_STEP: number = 0.01;
 const GOALS_MIN_ZOOM: number = 11;
