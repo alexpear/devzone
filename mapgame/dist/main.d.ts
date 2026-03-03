@@ -1,6 +1,6 @@
 declare const L: any;
-declare const GRID_STEP = 0.01;
-declare const GOALS_MIN_ZOOM = 11;
+declare const GRID_STEP: number;
+declare const GOALS_MIN_ZOOM: number;
 declare class MapGame {
     map: any;
     playerMarker: Record<string, any> | undefined;

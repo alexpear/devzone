@@ -2,6 +2,7 @@ const GRID_STEP = 0.01;
 const GOALS_MIN_ZOOM = 11;
 class MapGame {
     constructor() {
+        // eslint-disable-next-line @typescript-eslint/typedef
         this.map = L.map('map').setView([37.77, -122.42], 15); // Default: San Francisco
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.playerMarker = undefined;
@@ -10,7 +11,7 @@ class MapGame {
         this.locationKnown = false;
         // LATER could make this decay 1 point/day, eg by storing a started: Date and subtracting points from score equal to today - started.
         this.playerScore = 0;
-        this.scoreEl = document.getElementById('score');
+        this.scoreEl = document.getElementById('score'); // as HTMLElement;
         // Dict storing Dates in string format.
         this.coords2dates = {};
         // --- Map setup ---
