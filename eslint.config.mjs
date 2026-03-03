@@ -7,7 +7,13 @@ export default tseslint.config(
     ...tseslint.configs.recommended,
     eslintConfigPrettier,
     {
-        ignores: ['node_modules/', 'facegen/dist/', 'mapgame/dist/', 'util.js', '.*/'],
+        ignores: [
+            'node_modules/',
+            'facegen/dist/',
+            'mapgame/dist/',
+            'util.js',
+            '.*/',
+        ],
     },
     {
         files: ['**/*.ts'],

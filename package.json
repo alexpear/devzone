@@ -2,7 +2,6 @@
     "name": "devzone",
     "version": "0.1.0",
     "description": "Repo for experimental projects & LLM devtools.",
-    "type": "module",
     "scripts": {
         "test": "npm run lint && npm run prettier && tsc --build",
         "mapgame": "npm test && open mapgame/index.html",
