@@ -1,20 +1,20 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const L: any;
-const GRID_STEP = 0.01;
-const GOALS_MIN_ZOOM = 11;
+declare const L;
+const GRID_STEP: number = 0.01;
+const GOALS_MIN_ZOOM: number = 11;
 
 class MapGame {
+    // eslint-disable-next-line @typescript-eslint/typedef
     map = L.map('map').setView([37.77, -122.42], 15); // Default: San Francisco
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     playerMarker: Record<string, any> | undefined = undefined;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     renderedGoals: Map<string, Record<string, any>> = new Map();
-    locationKnown = false;
+    locationKnown: boolean = false;
 
     // LATER could make this decay 1 point/day, eg by storing a started: Date and subtracting points from score equal to today - started.
-    playerScore = 0;
-    scoreEl = document.getElementById('score') as HTMLElement;
+    playerScore: number = 0;
+    scoreEl: HTMLElement = document.getElementById('score'); // as HTMLElement;
 
     // Dict storing Dates in string format.
     coords2dates: Record<string, string> = {};
@@ -88,7 +88,7 @@ class MapGame {
         }
     }
 
-    updateScreen() {
+    updateScreen(): void {
         this.updateGoalVisuals();
         this.updateScoreDisplay();
     }
